@@ -7,6 +7,67 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* ---------- Leaderboards (localStorage; Atharva always holds the record) ---------- */
+  function createLeaderboard(id, opts) {
+    const lowerBetter = !!opts.lowerBetter, base = opts.atharvaBase, margin = opts.margin;
+    const floor = opts.floor || 0, ghosts = opts.ghosts || [];
+    const KEY = "lb95_" + id, HOUR = 3600000, mem = {};
+    const better = (x, y) => lowerBetter ? x < y : x > y;
+    function load() {
+      try { const s = localStorage.getItem(KEY); if (s) return JSON.parse(s); } catch (_) {}
+      return mem[KEY] || { you: [], a: base, ch: null, re: null };
+    }
+    function save(st) { mem[KEY] = st; try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (_) {} }
+    function submit(score) {
+      const st = load();
+      st.you.push(score);
+      st.you.sort((a, b) => lowerBetter ? a - b : b - a);
+      st.you = st.you.slice(0, 5);
+      const playerBest = st.you[0], now = Date.now();
+      // an hour after being beaten, the #95 reclaims the record
+      if (st.re && now >= st.re) { st.a = lowerBetter ? Math.max(floor, st.ch - margin) : st.ch + margin; st.ch = null; st.re = null; }
+      if (better(playerBest, st.a)) {
+        if (!st.re) { st.ch = playerBest; st.re = now + HOUR; }
+        else if (better(playerBest, st.ch)) { st.ch = playerBest; }
+      }
+      save(st);
+      const list = [{ name: "ATHARVA TRIVEDI 🐐", score: st.a, a: true }]
+        .concat(ghosts.map((g) => ({ name: g.name, score: g.score })))
+        .concat([{ name: "YOU", score: playerBest, you: true }]);
+      list.sort((p, q) => lowerBetter ? p.score - q.score : q.score - p.score);
+      const youRank = list.findIndex((e) => e.you) + 1, top = list.slice(0, 5);
+      return {
+        entries: top, youEntry: list.find((e) => e.you), youRank,
+        youInTop: top.some((e) => e.you), youLead: better(playerBest, st.a),
+        reclaimMin: st.re ? Math.max(1, Math.ceil((st.re - now) / 60000)) : 0,
+        isNewBest: score === playerBest,
+      };
+    }
+    return { submit };
+  }
+  function lbRow(pos, e, fmt) {
+    const li = document.createElement("li");
+    li.className = "lb-row" + (e.a ? " lb-a" : "") + (e.you ? " lb-you" : "");
+    const p = document.createElement("span"); p.className = "lb-pos"; p.textContent = "P" + pos;
+    const n = document.createElement("span"); n.className = "lb-name"; n.textContent = e.name;
+    const s = document.createElement("span"); s.className = "lb-score"; s.textContent = fmt(e.score);
+    li.append(p, n, s);
+    return li;
+  }
+  function renderLB(el, res, fmt) {
+    el.innerHTML = "";
+    res.entries.forEach((e, i) => el.appendChild(lbRow(i + 1, e, fmt)));
+    if (!res.youInTop && res.youEntry) {
+      const sep = document.createElement("li"); sep.className = "lb-sep"; sep.textContent = "···"; el.appendChild(sep);
+      el.appendChild(lbRow(res.youRank, res.youEntry, fmt));
+    }
+  }
+  function lbNote(res) {
+    if (res.youLead) return "👑 NEW TRACK RECORD — P1 is yours! The #95 reclaims it in ~" + res.reclaimMin + " min.";
+    if (res.isNewBest) return "New personal best · P" + res.youRank + " on the board.";
+    return "P" + res.youRank + " · the #95 still holds the record.";
+  }
+
   /* ---------- Engine sound (WebAudio synth, no files) ---------- */
   let soundOn = true, actx = null;
   const revCurve = (function () {
@@ -211,6 +272,8 @@
     const lightsWrap = $("#reactLights");
     const info = $("#reactInfo");
     const result = $("#reactResult");
+    const boardEl = $("#reactBoard");
+    const board = createLeaderboard("react", { lowerBetter: true, atharvaBase: 149, margin: 4, floor: 95, ghosts: [{ name: "quick_paws", score: 171 }, { name: "early_apex", score: 196 }, { name: "decaf_dan", score: 224 }, { name: "formation_lap", score: 255 }] });
     if (!btn || !lightsWrap) return;
     const lights = $$("span", lightsWrap);
     let state = "idle"; // idle | arming | live
@@ -248,6 +311,13 @@
         const ms = Math.round(performance.now() - startT);
         state = "idle";
         result.textContent = `⏱️ ${ms} ms — ${rate(ms)}`;
+        if (boardEl) {
+          const res = board.submit(ms);
+          renderLB(boardEl, res, (v) => v + " ms");
+          boardEl.hidden = false;
+          if (res.youLead) result.textContent += ` · 👑 P1 for ~${res.reclaimMin}m`;
+          else if (res.isNewBest) result.textContent += ` · PB, P${res.youRank}`;
+        }
         info.textContent = "Beat a real F1 start. Wait for lights out, then tap.";
         btn.textContent = "Go again"; btn.disabled = false;
       }
@@ -549,6 +619,8 @@
     const rgTitle = overlay.querySelector(".rg-title");
     const rgSub = overlay.querySelector(".rg-sub");
     const rgStart = $("#rgStart");
+    const rgBoard = $("#rgBoard"), rgNote = $("#rgNote");
+    const board = createLeaderboard("race", { lowerBetter: false, atharvaBase: 42, margin: 2, ghosts: [{ name: "box_box_cat", score: 31 }, { name: "kimi_fan_04", score: 26 }, { name: "midfield_meow", score: 20 }, { name: "sunday_driver", score: 13 }] });
 
     let state = "idle"; // idle | running | over
     let player, opps, overtakes, best = 0, speed, spawnT, roadOffset, lastRAF, lastLane, lastDrv;
@@ -584,6 +656,12 @@
       rgSub.textContent = "Finished P" + pos + " · " + overtakes + " overtaken";
       rgStart.textContent = "Race again ▸";
       overlay.hidden = false; updateHud();
+      if (rgBoard) {
+        const res = board.submit(overtakes);
+        renderLB(rgBoard, res, (v) => String(v));
+        rgNote.textContent = lbNote(res);
+        rgBoard.hidden = false; rgNote.hidden = false;
+      }
     }
 
     function loop(now) {
@@ -741,6 +819,7 @@
       rgTitle.textContent = "SPA · BELGIAN GP 🇧🇪";
       rgSub.textContent = "↑ / ↓ change lane · overtake the 2026 grid · R = rain";
       rgStart.textContent = "Lights out ▸";
+      if (rgBoard) { rgBoard.hidden = true; rgNote.hidden = true; }
       overlay.hidden = false; reset(); draw();
     }
     function closeGame() {

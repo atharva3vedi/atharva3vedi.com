@@ -254,8 +254,8 @@ a { color: inherit; text-decoration: none; }
 .rg-hud #rgPos { font-family: var(--display); font-weight: 700; color: var(--accent); font-size: 1rem; }
 .rg-hud #rgBest { margin-left: auto; color: #b9bec9; }
 .rg-overlay {
-  position: absolute; inset: 0; display: grid; place-content: center; gap: 12px; text-align: center;
-  background: rgba(6,7,10,0.74); border-radius: 12px; padding: 20px;
+  position: absolute; inset: 0; display: grid; place-content: center; gap: 9px; text-align: center;
+  background: rgba(6,7,10,0.80); border-radius: 12px; padding: 16px; overflow-y: auto;
 }
 .rg-overlay[hidden] { display: none; }
 .rg-title { font-family: var(--display); font-weight: 900; font-size: 1.6rem; color: #fff; }
@@ -273,6 +273,25 @@ a { color: inherit; text-decoration: none; }
 }
 .rg-controls button:active { background: var(--accent); }
 @media (hover: hover) and (pointer: fine) { .rg-controls { display: none; } }
+
+/* leaderboards */
+.rg-board, .mini-board { list-style: none; width: 100%; max-width: 320px; margin: 0 auto; display: grid; gap: 4px; }
+.rg-board[hidden], .mini-board[hidden] { display: none; }
+.lb-row {
+  display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 8px;
+  padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+  font-family: var(--head); font-weight: 600; font-size: 0.86rem;
+}
+.lb-pos { font-family: var(--mono); font-size: 0.7rem; color: var(--muted-2); }
+.lb-name { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lb-score { font-family: var(--mono); font-weight: 700; color: var(--text); }
+.lb-a { background: rgba(255,212,0,0.12); border-color: rgba(255,212,0,0.45); }
+.lb-a .lb-name { color: #ffd400; }
+.lb-you { background: rgba(225,6,0,0.16); border-color: var(--accent); }
+.lb-sep { text-align: center; color: var(--muted-2); font-family: var(--mono); font-size: 0.7rem; line-height: 0.6; }
+.rg-note { font-family: var(--head); font-size: 0.82rem; color: var(--muted); max-width: 320px; margin: 0 auto; line-height: 1.35; }
+.mini-board { margin-top: 10px; }
+.mini-board .lb-row { font-size: 0.82rem; }
 .f1car { width: 100%; max-width: 560px; overflow: visible; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
 .car-body { filter: drop-shadow(0 0 2px rgba(0,0,0,0.4)); }
 .hero-car .wheel { transform-box: fill-box; transform-origin: center; animation: spin 0.5s linear infinite; }
