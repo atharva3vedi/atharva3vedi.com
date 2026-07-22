@@ -408,6 +408,22 @@
     );
   })();
 
+  /* ---------- Active-section underline (scroll spy) ---------- */
+  (function scrollSpy() {
+    const map = {};
+    $$(".nav-links a").forEach((a) => {
+      const id = a.getAttribute("href");
+      if (id && id.length > 1 && id.charAt(0) === "#") { const sec = document.querySelector(id); if (sec) map[id] = a; }
+    });
+    const links = Object.keys(map).map((k) => map[k]);
+    if (!links.length || !("IntersectionObserver" in window)) return;
+    function setActive(a) { links.forEach((l) => l.classList.toggle("active", l === a)); }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { const a = map["#" + e.target.id]; if (a) setActive(a); } });
+    }, { rootMargin: "-45% 0px -45% 0px", threshold: 0 });
+    Object.keys(map).forEach((k) => io.observe(document.querySelector(k)));
+  })();
+
   /* ---------- Project card mouse glow ---------- */
   (function projGlow() {
     $$(".proj").forEach((p) => {
