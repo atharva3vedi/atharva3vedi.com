@@ -496,7 +496,7 @@
     // greeting for engineers who open DevTools
     try {
       console.log("%c🏎️🐱  Looking under the hood?", "font-size:16px;font-weight:bold;color:#e10600");
-      console.log("%cType 44 for a Hamilton moment. Also try: meow, box, drs — and the Konami code. — Atharva, Driver #3", "color:#8a8f9a");
+      console.log("%cType 44 for a Hamilton moment. Also try: meow, box, drs — and the Konami code. — Atharva, Driver #95", "color:#8a8f9a");
     } catch (_) {}
   })();
 })();
