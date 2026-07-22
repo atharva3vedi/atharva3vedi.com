@@ -7,41 +7,83 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- Leaderboards (localStorage; Atharva always holds the record) ---------- */
+  /* ---------- Leaderboards (local by default; global when LB is configured) ---------- */
+  // Global leaderboard is served by your self-hosted server.js (see README).
+  // "/api" works when server.js is serving the site; use a full URL (e.g. your
+  // Cloudflare Tunnel address) for the hybrid setup; "" disables it (local-only).
+  // If the server is ever unreachable, play continues and scores just save locally.
+  const LB = { api: "/api" };
+
+  function lbHandle() {
+    try {
+      let h = localStorage.getItem("lb95_handle");
+      if (!h) {
+        const a = ["PitCat", "BoxBox", "ApexCat", "Purrari", "Meowlaren", "SafetyCat", "DRSopen", "Chicane", "Slipstream", "GravelCat"];
+        h = a[Math.floor(Math.random() * a.length)] + Math.floor(Math.random() * 90 + 10);
+        localStorage.setItem("lb95_handle", h);
+      }
+      return h;
+    } catch (_) { return "PitCat" + Math.floor(Math.random() * 90 + 10); }
+  }
+  function lbRemote(game, entry, lowerBetter, cb) {
+    if (!LB.api) { cb(null); return; }
+    const base = LB.api.replace(/\/+$/, "");
+    try { fetch(base + "/score", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ game: game, name: entry.name, score: entry.score }) }).catch(() => {}); } catch (_) {}
+    const ctl = ("AbortController" in window) ? new AbortController() : null;
+    const to = ctl ? setTimeout(() => ctl.abort(), 4000) : null;
+    fetch(base + "/leaderboard?game=" + encodeURIComponent(game), { signal: ctl ? ctl.signal : undefined })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((rows) => { if (to) clearTimeout(to); cb(Array.isArray(rows) ? rows : null); })
+      .catch(() => { if (to) clearTimeout(to); cb(null); });
+  }
+
   function createLeaderboard(id, opts) {
     const lowerBetter = !!opts.lowerBetter, base = opts.atharvaBase, margin = opts.margin;
-    const floor = opts.floor || 0, ghosts = opts.ghosts || [];
+    const floor = opts.floor || 0, ghosts = opts.ghosts || [], game = opts.game || id;
     const KEY = "lb95_" + id, HOUR = 3600000, mem = {};
     const better = (x, y) => lowerBetter ? x < y : x > y;
+    const worseBy = (x) => (lowerBetter ? x + 1 : Math.max(0, x - 1));
+    const beatBy = (x) => (lowerBetter ? Math.max(floor, x - margin) : x + margin);
     function load() {
       try { const s = localStorage.getItem(KEY); if (s) return JSON.parse(s); } catch (_) {}
       return mem[KEY] || { you: [], a: base, ch: null, re: null };
     }
     function save(st) { mem[KEY] = st; try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (_) {} }
-    function submit(score) {
-      const st = load();
-      st.you.push(score);
-      st.you.sort((a, b) => lowerBetter ? a - b : b - a);
-      st.you = st.you.slice(0, 5);
-      const playerBest = st.you[0], now = Date.now();
-      // an hour after being beaten, the #95 reclaims the record
-      if (st.re && now >= st.re) { st.a = lowerBetter ? Math.max(floor, st.ch - margin) : st.ch + margin; st.ch = null; st.re = null; }
-      if (better(playerBest, st.a)) {
-        if (!st.re) { st.ch = playerBest; st.re = now + HOUR; }
-        else if (better(playerBest, st.ch)) { st.ch = playerBest; }
-      }
-      save(st);
-      const list = [{ name: "ATHARVA TRIVEDI 🐐", score: st.a, a: true }]
-        .concat(ghosts.map((g) => ({ name: g.name, score: g.score })))
-        .concat([{ name: "YOU", score: playerBest, you: true }]);
-      list.sort((p, q) => lowerBetter ? p.score - q.score : q.score - p.score);
-      const youRank = list.findIndex((e) => e.you) + 1, top = list.slice(0, 5);
+
+    // build a display board from a set of rival rows, keeping the #95 pinned at the top
+    function assemble(st, rows, playerBest, viewerLeads, isNewBest) {
+      const others = rows.filter((r) => !r.a);
+      const realMax = others.length ? others.reduce((m, r) => (better(r.score, m) ? r.score : m), others[0].score) : null;
+      let aScore;
+      if (viewerLeads) aScore = worseBy(playerBest);                         // the viewer holds P1 for their hour
+      else { aScore = st.a; if (realMax != null && better(realMax, aScore)) aScore = beatBy(realMax); } // else stay ahead of the field
+      const list = [{ name: "ATHARVA TRIVEDI 🐐", score: aScore, a: true }].concat(rows);
+      list.sort((p, q) => (lowerBetter ? p.score - q.score : q.score - p.score));
+      const youIdx = list.findIndex((e) => e.you), top = list.slice(0, 5);
       return {
-        entries: top, youEntry: list.find((e) => e.you), youRank,
-        youInTop: top.some((e) => e.you), youLead: better(playerBest, st.a),
-        reclaimMin: st.re ? Math.max(1, Math.ceil((st.re - now) / 60000)) : 0,
-        isNewBest: score === playerBest,
+        entries: top, youEntry: list[youIdx], youRank: youIdx + 1,
+        youInTop: top.some((e) => e.you), youLead: viewerLeads,
+        reclaimMin: st.re ? Math.max(1, Math.ceil((st.re - Date.now()) / 60000)) : 0, isNewBest: isNewBest,
       };
+    }
+
+    function submit(score, onRemote) {
+      const st = load(), now = Date.now();
+      st.you.push(score); st.you.sort((a, b) => (lowerBetter ? a - b : b - a)); st.you = st.you.slice(0, 5);
+      const playerBest = st.you[0];
+      if (st.re && now >= st.re) { st.a = beatBy(st.ch); st.ch = null; st.re = null; } // an hour later, the #95 reclaims
+      if (better(playerBest, st.a)) { if (!st.re) { st.ch = playerBest; st.re = now + HOUR; } else if (better(playerBest, st.ch)) st.ch = playerBest; }
+      save(st);
+      const viewerLeads = !!st.re && better(playerBest, st.a), isNewBest = score === playerBest;
+      const localRows = ghosts.map((g) => ({ name: g.name, score: g.score })).concat([{ name: "YOU", score: playerBest, you: true }]);
+      if (onRemote && LB.api) {
+        lbRemote(game, { name: lbHandle(), score: score }, lowerBetter, (rows) => {
+          if (!rows) return;
+          const gRows = rows.map((r) => ({ name: String(r.name || "?").slice(0, 14), score: r.score })).concat([{ name: lbHandle() + " (you)", score: playerBest, you: true }]);
+          onRemote(assemble(st, gRows, playerBest, viewerLeads, isNewBest));
+        });
+      }
+      return assemble(st, localRows, playerBest, viewerLeads, isNewBest);
     }
     return { submit };
   }
@@ -312,7 +354,7 @@
         state = "idle";
         result.textContent = `⏱️ ${ms} ms — ${rate(ms)}`;
         if (boardEl) {
-          const res = board.submit(ms);
+          const res = board.submit(ms, (g) => renderLB(boardEl, g, (v) => v + " ms"));
           renderLB(boardEl, res, (v) => v + " ms");
           boardEl.hidden = false;
           if (res.youLead) result.textContent += ` · 👑 P1 for ~${res.reclaimMin}m`;
@@ -657,7 +699,7 @@
       rgStart.textContent = "Race again ▸";
       overlay.hidden = false; updateHud();
       if (rgBoard) {
-        const res = board.submit(overtakes);
+        const res = board.submit(overtakes, (g) => { renderLB(rgBoard, g, (v) => String(v)); rgNote.textContent = lbNote(g); });
         renderLB(rgBoard, res, (v) => String(v));
         rgNote.textContent = lbNote(res);
         rgBoard.hidden = false; rgNote.hidden = false;

@@ -448,7 +448,34 @@ a { color: inherit; text-decoration: none; }
 /* =========================================================
    PODIUM / PROJECTS
    ========================================================= */
-.projects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+.podium { display: grid; grid-template-columns: 1fr 1.14fr 1fr; gap: 20px; align-items: end; margin-top: 40px; }
+.podium-item { display: flex; flex-direction: column; }
+.podium-item .proj { flex: 1; min-height: 340px; display: flex; flex-direction: column; overflow: visible; }
+.podium-item .proj::before { border-radius: 14px; }
+.podium-item .proj-links { margin-top: auto; }
+.pod-1 { grid-column: 2; grid-row: 1; position: relative; }
+.pod-2 { grid-column: 1; grid-row: 1; }
+.pod-3 { grid-column: 3; grid-row: 1; }
+.pod-1::before { /* trophy above the winner */
+  content: "🏆"; position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+  font-size: 1.7rem; z-index: 2; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+}
+.podium-step {
+  position: relative; margin-top: 14px; border-radius: 9px 9px 0 0;
+  display: grid; place-items: center; background: var(--step, #3a3d46);
+  box-shadow: 0 -6px 16px rgba(0,0,0,0.35);
+}
+.podium-step::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px;
+  background: rgba(255,255,255,0.4); border-radius: 9px 9px 0 0;
+}
+.pod-place {
+  font-family: var(--display); font-weight: 900; font-size: 2.4rem;
+  color: rgba(0,0,0,0.6); text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+}
+.pod-1 .podium-step { height: 96px; }
+.pod-2 .podium-step { height: 62px; }
+.pod-3 .podium-step { height: 42px; }
 .proj {
   position: relative; background: var(--panel); border: 1px solid var(--line);
   border-radius: 14px; padding: 26px; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
@@ -483,34 +510,15 @@ a { color: inherit; text-decoration: none; }
 .plink:hover { border-color: var(--accent); }
 
 /* =========================================================
-   PODIUM MEDAL BORDERS
+   PODIUM MEDALS
    ========================================================= */
-/* P1 — Gold */
-.projects > .proj.reveal:nth-child(1) {
-  border-color: #ffd700 !important;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.15) !important;
-}
-.projects > .proj.reveal:nth-child(1) .proj-pos {
-  color: #ffd700 !important;
-}
-
-/* P2 — Silver */
-.projects > .proj.reveal:nth-child(2) {
-  border-color: #c0c0c0 !important;
-  box-shadow: 0 0 30px rgba(192, 192, 192, 0.15) !important;
-}
-.projects > .proj.reveal:nth-child(2) .proj-pos {
-  color: #c0c0c0 !important;
-}
-
-/* P3 — Bronze */
-.projects > .proj.reveal:nth-child(3) {
-  border-color: #cd7f32 !important;
-  box-shadow: 0 0 30px rgba(205, 127, 50, 0.15) !important;
-}
-.projects > .proj.reveal:nth-child(3) .proj-pos {
-  color: #cd7f32 !important;
-}
+.pod-1 { --step: linear-gradient(180deg, #ffe680, #e3b200); } /* gold */
+.pod-2 { --step: linear-gradient(180deg, #eceff3, #a7abb4); } /* silver */
+.pod-3 { --step: linear-gradient(180deg, #e6a869, #b06d2a); } /* bronze */
+.pod-1 .proj { border-color: rgba(255, 215, 0, 0.55); box-shadow: 0 0 30px rgba(255, 215, 0, 0.15); }
+.pod-2 .proj { border-color: rgba(192, 196, 204, 0.50); box-shadow: 0 0 26px rgba(192, 196, 204, 0.12); }
+.pod-3 .proj { border-color: rgba(205, 127, 50, 0.50); box-shadow: 0 0 26px rgba(205, 127, 50, 0.12); }
+.pod-1 .proj-head h3 { color: #ffd76a; }
 
 /* =========================================================
    GARAGE / FOR SALE
@@ -649,7 +657,13 @@ a { color: inherit; text-decoration: none; }
   .hero-car { order: -1; max-width: 420px; margin: 0 auto; }
   .grid-wrap { grid-template-columns: 1fr; }
   .telemetry-grid { grid-template-columns: 1fr; }
-  .projects { grid-template-columns: 1fr; }
+  .podium { grid-template-columns: 1fr; align-items: stretch; margin-top: 30px; gap: 16px; }
+  .pod-1, .pod-2, .pod-3 { grid-column: 1; grid-row: auto; }
+  .pod-1 .podium-step, .pod-2 .podium-step, .pod-3 .podium-step { height: 32px; margin-top: 0; border-radius: 0 0 10px 10px; }
+  .podium-step::before { display: none; }
+  .pod-place { font-size: 1.3rem; }
+  .podium-item .proj { min-height: 0; }
+  .pod-1::before { top: -26px; font-size: 1.4rem; }
   .garage-grid { grid-template-columns: 1fr; }
   .garage-stage { order: -1; }
   .radio-grid { grid-template-columns: 1fr; }

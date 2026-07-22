@@ -77,6 +77,49 @@ npx serve .
 
 Fonts load from Google Fonts over the network. Everything else runs fully local — no dependency chain, no drama.
 
+## 🏆 Global Leaderboard — self-hosted on your PC
+
+Out of the box, the crash board and reaction board are **local** — each visitor races their own ghost in their own browser (localStorage). The **#95 is always P1**; beat it and you hold the record for an hour before it's reclaimed.
+
+To make it **one shared board hosted on your own machine**, there's a tiny zero-dependency Node server (`server.js`). It serves the site *and* stores every score in `leaderboard.json` right next to it.
+
+### Run it
+
+Install [Node.js](https://nodejs.org) once, then in this folder:
+
+```bash
+node server.js
+# 🏁 http://localhost:8787   (Ctrl+C to stop)
+```
+
+That's the whole site **plus** the global leaderboard, live on your PC. The frontend already points at `/api` (see `LB` in `script.js`), so scores sync the moment the server is up.
+
+### Keep it running forever (Windows)
+
+- **Easiest:** Task Scheduler → Create Task → Trigger *At log on* → Action `node C:\path\to\server.js`.
+- **As a service:** [pm2](https://pm2.keymetrics.io) → `npm i -g pm2`, then `pm2 start server.js && pm2 save && pm2 startup`.
+- **Or** [NSSM](https://nssm.cc) to wrap it as a real Windows service.
+
+### Let the outside world reach it
+
+Your PC needs a public door. The clean, free way (no router port-forwarding, HTTPS included) is a **Cloudflare Tunnel**:
+
+```bash
+# one-time: install cloudflared, then
+cloudflared tunnel --url http://localhost:8787
+```
+
+That prints a public `https://…trycloudflare.com` URL. For a permanent address, make a **named tunnel** and map it to `atharva3vedi.com` in the Cloudflare dashboard. (Old-school alternative: router port-forward + dynamic DNS — more hassle, same result.)
+
+### "If my PC is off, can people still play?"
+
+Yes — that's the whole design:
+
+- **Recommended (always playable):** host the static files on an always-on free host (Cloudflare Pages / Netlify) and run **only** `server.js` on your PC via the tunnel. Set `LB.api` in `script.js` to your tunnel URL. Now the **site always loads and always plays** — when your PC is up, scores go global; when it's off, each score just saves to that visitor's local board. No errors, no hanging (4-second timeout, then silent fallback).
+- **Full self-host:** serve everything from `server.js`. Simplest, but if the PC is fully off the site itself is unreachable, so for "always playable" prefer the hybrid above.
+
+**Notes:** the #95 stays pinned to P1 even against real global scores (that's the point). `server.js` caps name length and score range, keeps the best 200 per game, and blocks path traversal — but any public endpoint can be spammed, so if it's ever abused, park it behind Cloudflare's free rate-limiting. Set `LB.api` to `""` to switch global mode off entirely.
+
 ---
 
 <p align="center"><i>Built with horsepower, whiskers, and zero frameworks.</i></p>
