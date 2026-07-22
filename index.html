@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atharva Trivedi — AI/ML Engineer · Driver #3</title>
+  <meta name="description" content="Atharva Trivedi — AI/ML software engineer racing for Ericsson's 5G RAN program. LLM agents, RAG pipelines, full-stack systems. Portfolio of a racing cat." />
+  <meta name="theme-color" content="#0a0b0f" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Atharva Trivedi — AI/ML Engineer · Driver #3" />
+  <meta property="og:description" content="LLM agents, RAG pipelines, 5G RAN, and a cat at the wheel. Take a lap." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://atharva3vedi.com" />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Titillium+Web:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Loading / lights-out intro -->
+  <div id="intro" class="intro">
+    <div class="intro-lights" aria-hidden="true">
+      <span class="light"></span><span class="light"></span><span class="light"></span>
+      <span class="light"></span><span class="light"></span>
+    </div>
+    <p class="intro-text">FORMATION LAP…</p>
+  </div>
+
+  <!-- Paw-print cursor trail canvas -->
+  <canvas id="pawTrail" class="paw-trail" aria-hidden="true"></canvas>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav" id="top">
+    <a class="nav-brand" href="#top" aria-label="Home">
+      <span class="brand-num">3</span>
+      <span class="brand-name">A. TRIVEDI</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#grid">Grid</a>
+      <a href="#telemetry">Telemetry</a>
+      <a href="#history">Race History</a>
+      <a href="#podium">Podium</a>
+      <a href="#garage">Garage</a>
+      <a href="#radio">Team Radio</a>
+      <a href="#pitwall" class="nav-cta">Pit Wall</a>
+    </nav>
+    <button class="nav-burger" id="burger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- Tire-compound theme switcher -->
+  <div class="compound-switch" id="compoundSwitch" role="group" aria-label="Tire compound (accent color)">
+    <button class="tyre soft active" data-accent="#e10600" title="Soft — red">S</button>
+    <button class="tyre medium" data-accent="#ffd400" title="Medium — yellow">M</button>
+    <button class="tyre hard" data-accent="#e6e6e6" title="Hard — white">H</button>
+  </div>
+
+  <!-- Engine-sound toggle -->
+  <button class="sound-toggle" id="soundToggle" aria-pressed="true" title="Engine sound on/off">🔊</button>
+
+  <main>
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="hero">
+      <div class="hero-grain" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="kicker"><span class="flag">🏁</span> ROUND 1 · BANGALORE GP · 2026 SEASON</p>
+          <h1 class="hero-name">ATHARVA<br />TRIVEDI</h1>
+          <p class="hero-role">
+            <span class="role-static">AI/ML SOFTWARE ENGINEER</span>
+            <span class="role-rotate" id="roleRotate" aria-live="polite"></span>
+          </p>
+          <p class="hero-sub">
+            I build LLM agents, RAG pipelines, and full-stack systems — currently
+            racing for <strong>Ericsson's 5G RAN</strong> program. Bit of a cat about it.
+          </p>
+          <div class="hero-cta">
+            <a href="#podium" class="btn btn-primary">🏆 See the Podium</a>
+            <a href="assets/atharva-trivedi-resume.pdf" class="btn btn-ghost" download>⬇ Race Card (CV)</a>
+          </div>
+
+          <!-- Start lights -->
+          <div class="start-lights" id="startLights" aria-hidden="true">
+            <div class="sl-gantry">
+              <span class="sl"></span><span class="sl"></span><span class="sl"></span>
+              <span class="sl"></span><span class="sl"></span>
+            </div>
+            <p class="sl-caption" id="slCaption">LIGHTS OUT AND AWAY WE GO</p>
+          </div>
+        </div>
+
+        <!-- Racing cat car -->
+        <div class="hero-car" aria-label="A cat driving a Formula 1 car" role="img">
+          <div class="speed-lines" aria-hidden="true"></div>
+          <svg class="f1car" viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- ground shadow -->
+            <ellipse cx="320" cy="255" rx="240" ry="18" fill="rgba(0,0,0,0.5)" />
+
+            <!-- rear wing -->
+            <g class="car-part">
+              <rect x="18" y="120" width="60" height="12" rx="3" fill="var(--car-2)"/>
+              <rect x="24" y="132" width="10" height="60" fill="var(--car-1)"/>
+              <rect x="62" y="132" width="10" height="60" fill="var(--car-1)"/>
+              <rect x="14" y="112" width="68" height="8" rx="3" fill="var(--accent)"/>
+            </g>
+
+            <!-- floor / body -->
+            <path class="car-body" d="M60 196 L120 196 C150 196 165 150 235 150 L360 150
+                 C420 150 430 160 470 168 C520 178 560 176 596 196 L596 210
+                 C560 214 120 214 60 210 Z" fill="var(--car-1)"/>
+            <!-- sidepod accent -->
+            <path d="M235 150 L360 150 C400 150 415 158 445 166 L300 178 L235 172 Z" fill="var(--car-2)"/>
+            <path d="M120 196 C150 196 165 150 235 150 L235 172 L150 190 Z" fill="var(--accent)" opacity="0.85"/>
+
+            <!-- cockpit + halo -->
+            <path class="halo" d="M250 150 C255 118 320 116 330 150" fill="none" stroke="var(--car-3)" stroke-width="7" stroke-linecap="round"/>
+            <rect x="238" y="150" width="120" height="6" rx="3" fill="var(--car-3)"/>
+
+            <!-- nose -->
+            <path d="M470 168 C520 176 590 182 620 196 L596 196 C560 176 520 178 470 168 Z" fill="var(--car-2)"/>
+            <!-- front wing -->
+            <g>
+              <rect x="588" y="196" width="44" height="8" rx="3" fill="var(--car-2)"/>
+              <rect x="596" y="204" width="40" height="7" rx="2" fill="var(--accent)"/>
+            </g>
+
+            <!-- number roundel -->
+            <circle cx="160" cy="176" r="20" fill="#fff"/>
+            <text x="160" y="184" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="900" font-size="24" fill="var(--car-1)">3</text>
+
+            <!-- THE CAT DRIVER -->
+            <g class="cat-driver">
+              <!-- helmet -->
+              <circle cx="290" cy="132" r="26" fill="var(--accent)"/>
+              <path d="M266 134 a24 24 0 0 1 48 0 Z" fill="#0a0b0f" opacity="0.85"/>
+              <rect x="270" y="126" width="40" height="12" rx="6" fill="#7fe9ff" opacity="0.9"/>
+              <!-- cat ears on helmet -->
+              <path d="M270 110 L262 86 L286 104 Z" fill="var(--accent)"/>
+              <path d="M310 110 L318 86 L294 104 Z" fill="var(--accent)"/>
+              <path d="M272 106 L268 94 L280 103 Z" fill="#0a0b0f"/>
+              <path d="M308 106 L312 94 L300 103 Z" fill="#0a0b0f"/>
+              <!-- little cat face peeking (whiskers) -->
+              <g stroke="#fff" stroke-width="1.6" opacity="0.9">
+                <line x1="276" y1="140" x2="262" y2="138"/>
+                <line x1="276" y1="143" x2="262" y2="144"/>
+                <line x1="304" y1="140" x2="318" y2="138"/>
+                <line x1="304" y1="143" x2="318" y2="144"/>
+              </g>
+              <circle cx="290" cy="141" r="2.4" fill="#ff9bd0"/>
+            </g>
+
+            <!-- wheels -->
+            <g class="wheel wheel-rear">
+              <circle cx="150" cy="210" r="46" fill="#111"/>
+              <circle cx="150" cy="210" r="46" fill="none" stroke="#2a2a2a" stroke-width="4"/>
+              <circle cx="150" cy="210" r="20" fill="#1c1c22"/>
+              <g stroke="var(--accent)" stroke-width="4">
+                <line x1="150" y1="176" x2="150" y2="244"/>
+                <line x1="116" y1="210" x2="184" y2="210"/>
+                <line x1="126" y1="186" x2="174" y2="234"/>
+                <line x1="174" y1="186" x2="126" y2="234"/>
+              </g>
+            </g>
+            <g class="wheel wheel-front">
+              <circle cx="500" cy="210" r="46" fill="#111"/>
+              <circle cx="500" cy="210" r="46" fill="none" stroke="#2a2a2a" stroke-width="4"/>
+              <circle cx="500" cy="210" r="20" fill="#1c1c22"/>
+              <g stroke="var(--accent)" stroke-width="4">
+                <line x1="500" y1="176" x2="500" y2="244"/>
+                <line x1="466" y1="210" x2="534" y2="210"/>
+                <line x1="476" y1="186" x2="524" y2="234"/>
+                <line x1="524" y1="186" x2="476" y2="234"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- scrolling ticker -->
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <span>PYTHON</span><span>·</span><span>LANGCHAIN</span><span>·</span><span>SPRING BOOT</span><span>·</span>
+          <span>RAG</span><span>·</span><span>5G RAN</span><span>·</span><span>FLUTTER</span><span>·</span>
+          <span>PYTORCH</span><span>·</span><span>AWS</span><span>·</span><span>LLM AGENTS</span><span>·</span>
+          <span>DJANGO</span><span>·</span><span>MEOW</span><span>·</span>
+          <span>PYTHON</span><span>·</span><span>LANGCHAIN</span><span>·</span><span>SPRING BOOT</span><span>·</span>
+          <span>RAG</span><span>·</span><span>5G RAN</span><span>·</span><span>FLUTTER</span><span>·</span>
+          <span>PYTORCH</span><span>·</span><span>AWS</span><span>·</span><span>LLM AGENTS</span><span>·</span>
+          <span>DJANGO</span><span>·</span><span>MEOW</span><span>·</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== GRID / ABOUT ===================== -->
+    <section class="section grid-sec" id="grid">
+      <div class="section-head">
+        <span class="sec-index">01</span>
+        <h2 class="sec-title">The Grid</h2>
+        <span class="sec-tag">// driver profile</span>
+      </div>
+
+      <div class="grid-wrap">
+        <article class="driver-card reveal">
+          <div class="dc-top">
+            <div class="dc-num">3</div>
+            <div class="dc-id">
+              <h3>ATHARVA TRIVEDI</h3>
+              <p>🇮🇳 Bangalore, India</p>
+            </div>
+          </div>
+          <ul class="dc-stats">
+            <li><span>Team</span><strong>GlobalLogic → Ericsson</strong></li>
+            <li><span>Championship</span><strong>AI / ML Engineering</strong></li>
+            <li><span>Chassis</span><strong>B.Tech CSE, VNIT Nagpur</strong></li>
+            <li><span>Debut</span><strong>2021 · Full-time 2025</strong></li>
+            <li><span>Best Lap</span><strong>−31% signalling (5G advisor)</strong></li>
+          </ul>
+        </article>
+
+        <div class="grid-bio reveal">
+          <p class="bio-lead">
+            AI/ML-focused software engineer who likes the corners where <em>backend
+            engineering</em> and <em>agentic AI</em> meet.
+          </p>
+          <p>
+            I've shipped production LLM agents and RAG pipelines, launched a full travel
+            app solo to the Play Store, and I'm now applying that to Ericsson's 5G RAN
+            program — pairing Java Spring Boot microservices with AI-driven approaches to
+            network data. I ramp into new technical domains fast and turn that into
+            measurable impact.
+          </p>
+          <p>
+            Off the clock I'm the kind of engineer who'd happily name a variable
+            <code>lewis</code> and treats a green CI pipeline like a Hamilton win at
+            Silverstone. Curious, a little competitive, and always looking for the next apex.
+          </p>
+          <div class="fun-facts">
+            <span>😼 Cat person, obviously</span>
+            <span>🏎️ Lewis Hamilton loyalist 🐐</span>
+            <span>☕ Runs on caffeine + curiosity</span>
+            <span>🥇 Gold Medalist, IMO &amp; NSO</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== TELEMETRY / SKILLS ===================== -->
+    <section class="section telemetry-sec" id="telemetry">
+      <div class="section-head">
+        <span class="sec-index">02</span>
+        <h2 class="sec-title">Telemetry</h2>
+        <span class="sec-tag">// car setup &amp; skills</span>
+      </div>
+
+      <div class="telemetry-grid">
+        <div class="tele-block reveal">
+          <h3 class="tele-title">🏎️ Powertrain <small>Languages</small></h3>
+          <div class="bars" data-bars>
+            <div class="bar" data-val="95"><span>Python</span><i></i></div>
+            <div class="bar" data-val="88"><span>Java</span><i></i></div>
+            <div class="bar" data-val="80"><span>C / C++</span><i></i></div>
+            <div class="bar" data-val="85"><span>JavaScript / TS</span><i></i></div>
+            <div class="bar" data-val="82"><span>Dart</span><i></i></div>
+          </div>
+        </div>
+
+        <div class="tele-block reveal">
+          <h3 class="tele-title">⚡ ERS Hybrid <small>AI / LLM / Deep Learning</small></h3>
+          <div class="bars" data-bars>
+            <div class="bar" data-val="93"><span>LangChain &amp; Agents</span><i></i></div>
+            <div class="bar" data-val="90"><span>RAG &amp; Prompt Eng.</span><i></i></div>
+            <div class="bar" data-val="85"><span>Llama / Groq</span><i></i></div>
+            <div class="bar" data-val="82"><span>PyTorch / TensorFlow</span><i></i></div>
+            <div class="bar" data-val="80"><span>Pinecone / Vectors</span><i></i></div>
+          </div>
+        </div>
+
+        <div class="tele-block reveal">
+          <h3 class="tele-title">🛠️ Aero &amp; Chassis <small>Frameworks</small></h3>
+          <div class="bars" data-bars>
+            <div class="bar" data-val="90"><span>Spring Boot</span><i></i></div>
+            <div class="bar" data-val="86"><span>Django / DRF</span><i></i></div>
+            <div class="bar" data-val="88"><span>Flutter</span><i></i></div>
+            <div class="bar" data-val="84"><span>ReactJS</span><i></i></div>
+            <div class="bar" data-val="75"><span>Angular</span><i></i></div>
+          </div>
+        </div>
+
+        <div class="tele-block reveal">
+          <h3 class="tele-title">🔧 Pit Crew <small>Cloud &amp; Infra</small></h3>
+          <div class="bars" data-bars>
+            <div class="bar" data-val="85"><span>AWS / EC2</span><i></i></div>
+            <div class="bar" data-val="88"><span>Firebase / Supabase</span><i></i></div>
+            <div class="bar" data-val="84"><span>Docker</span><i></i></div>
+            <div class="bar" data-val="90"><span>Git &amp; REST APIs</span><i></i></div>
+            <div class="bar" data-val="80"><span>CI/CD workflows</span><i></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== RACE HISTORY / EXPERIENCE ===================== -->
+    <section class="section history-sec" id="history">
+      <div class="section-head">
+        <span class="sec-index">03</span>
+        <h2 class="sec-title">Race History</h2>
+        <span class="sec-tag">// where I've raced</span>
+      </div>
+
+      <div class="timeline">
+        <!-- Ericsson -->
+        <article class="race reveal p1">
+          <div class="race-flag">🏁</div>
+          <div class="race-body">
+            <div class="race-top">
+              <h3>Software Engineer</h3>
+              <span class="race-pos">LEADING</span>
+            </div>
+            <p class="race-team">GlobalLogic — Ericsson 5G RAN Program</p>
+            <p class="race-date">Aug 2025 — Present</p>
+            <ul>
+              <li>Applied agentic AI + prompt engineering to prototype automation across RAN data pipelines — <strong>+40% delivery efficiency</strong>.</li>
+              <li>Build and maintain Java Spring Boot microservices &amp; REST APIs on a large-scale, multi-vendor 5G data platform under secure-coding standards.</li>
+              <li>Ramped from a non-telecom background to working fluency in RAN architecture within months.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Montty — NOT on resume -->
+        <article class="race reveal offtrack">
+          <div class="race-flag">😼</div>
+          <div class="race-body">
+            <div class="race-top">
+              <h3>Head of Sales</h3>
+              <span class="race-pos alt">OFF THE RESUME</span>
+            </div>
+            <p class="race-team">Montty</p>
+            <p class="race-date"><span class="edit">[ dates — edit me ]</span></p>
+            <ul>
+              <li><span class="edit">Led sales strategy and built the go-to-market motion for Montty — edit this with the real story.</span></li>
+              <li><span class="edit">Owned the pipeline end-to-end: outreach, demos, and closing — [X] deals / [Y] revenue.</span></li>
+              <li>Proof I can sell the car, not just build the engine. Engineers who can pitch are rare.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- AIonOS -->
+        <article class="race reveal">
+          <div class="race-flag">🤖</div>
+          <div class="race-body">
+            <div class="race-top">
+              <h3>AI/ML Development Intern</h3>
+              <span class="race-pos">PODIUM</span>
+            </div>
+            <p class="race-team">AIonOS</p>
+            <p class="race-date">Jul 2024 — Jan 2025</p>
+            <ul>
+              <li>Designed and shipped a production-grade agentic AI system (LangChain, Llama-8B) automating end-to-end hotel booking — multi-step reasoning, tool/API orchestration, contextual memory.</li>
+              <li>Iterated on prompt design and evaluation, driving <strong>~20% customer growth</strong> through better conversion and less booking friction.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Click2Cloud -->
+        <article class="race reveal">
+          <div class="race-flag">📱</div>
+          <div class="race-body">
+            <div class="race-top">
+              <h3>Flutter Intern</h3>
+              <span class="race-pos">ROOKIE</span>
+            </div>
+            <p class="race-team">Click2Cloud</p>
+            <p class="race-date">Dec 2022 — Jan 2023</p>
+            <ul>
+              <li>Built cross-platform Flutter features, integrated REST APIs, and implemented GetX state management for production app workflows.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- extra internship placeholder -->
+        <article class="race reveal offtrack">
+          <div class="race-flag">➕</div>
+          <div class="race-body">
+            <div class="race-top">
+              <h3><span class="edit">Another internship / gig</span></h3>
+              <span class="race-pos alt">OFF THE RESUME</span>
+            </div>
+            <p class="race-team"><span class="edit">[ company — edit me ]</span></p>
+            <p class="race-date"><span class="edit">[ dates ]</span></p>
+            <ul>
+              <li><span class="edit">Drop in that other internship you mentioned — what you built, the stack, the result. Delete this card if you don't need it.</span></li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================== PODIUM / PROJECTS ===================== -->
+    <section class="section podium-sec" id="podium">
+      <div class="section-head">
+        <span class="sec-index">04</span>
+        <h2 class="sec-title">The Podium</h2>
+        <span class="sec-tag">// selected wins</span>
+      </div>
+
+      <div class="projects">
+        <!-- WanderBuddy -->
+        <article class="proj reveal">
+          <div class="proj-pos">P1</div>
+          <div class="proj-head">
+            <h3>WanderBuddy</h3>
+            <p class="proj-tag">Production travel platform · sole engineer</p>
+          </div>
+          <p class="proj-desc">
+            Shipped a full travel app end-to-end — architecture to Play Store launch — with
+            real-time chat (Stream), voice/video calls (Agora), live location (Mapbox), an
+            AI itinerary planner, and visa-application workflows on a Firebase/Supabase backend.
+          </p>
+          <div class="proj-stack">
+            <span>Flutter</span><span>Firebase</span><span>Supabase</span><span>Stream</span><span>Agora</span><span>Mapbox</span>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="plink" data-edit-link>▶ Play Store</a>
+          </div>
+        </article>
+
+        <!-- LTE-RRC AI -->
+        <article class="proj reveal featured-proj">
+          <div class="proj-pos">P2</div>
+          <div class="proj-head">
+            <h3>LTE-RRC AI Release Advisor</h3>
+            <p class="proj-tag">C11 + fixed-point ML · on-device</p>
+          </div>
+          <p class="proj-desc">
+            An LTE RRC base-station state machine in C11 with a self-contained ML "release
+            advisor". Cuts control-plane <strong>signalling by 31%</strong> at matched
+            connected-time versus a static timer — with <strong>zero illegal state
+            transitions</strong>. My 5G RAN day-job, made concrete.
+          </p>
+          <div class="proj-stack">
+            <span>C11</span><span>Fixed-point ML</span><span>State machines</span><span>5G/LTE RAN</span>
+          </div>
+          <div class="proj-links">
+            <a href="https://github.com/atharvatrivedi-gl/LTE-RRC_AI" class="plink" target="_blank" rel="noopener">◆ GitHub</a>
+          </div>
+        </article>
+
+        <!-- Tumor Growth -->
+        <article class="proj reveal">
+          <div class="proj-pos">P3</div>
+          <div class="proj-head">
+            <h3>Tumor Growth Optimization</h3>
+            <p class="proj-tag">Agent-based modeling · ISCON 2025</p>
+          </div>
+          <p class="proj-desc">
+            Combined evolutionary game theory with Stackelberg optimization in an agent-based
+            simulation — <strong>~25% lower tumor burden</strong> and <strong>~28% less
+            treatment intensity</strong>. Presented the findings at ISCON 2025.
+          </p>
+          <div class="proj-stack">
+            <span>Python</span><span>Mesa</span><span>Game theory</span><span>ABM</span>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="plink" data-edit-link>◆ GitHub</a>
+          </div>
+        </article>
+
+        <!-- AlgoJudge -->
+        <article class="proj reveal">
+          <div class="proj-pos">P4</div>
+          <div class="proj-head">
+            <h3>AlgoJudge.xyz</h3>
+            <p class="proj-tag">Online judge platform</p>
+          </div>
+          <p class="proj-desc">
+            A full-stack online judge with scalable APIs for auth, submissions, and code
+            evaluation pipelines — containerized with Docker and deployed on AWS EC2.
+          </p>
+          <div class="proj-stack">
+            <span>Django REST</span><span>ReactJS</span><span>Docker</span><span>AWS</span><span>EC2</span>
+          </div>
+          <div class="proj-links">
+            <a href="#" class="plink" data-edit-link>◆ GitHub</a>
+            <a href="#" class="plink" data-edit-link>▶ Live</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================== GARAGE / APP FOR SALE ===================== -->
+    <section class="section garage-sec" id="garage">
+      <div class="section-head">
+        <span class="sec-index">05</span>
+        <h2 class="sec-title">The Garage</h2>
+        <span class="sec-tag">// one car is for sale</span>
+      </div>
+
+      <!-- Want to name the app publicly? Swap the <h3> text for its name and add real
+           links/details. Kept deliberately under wraps until you're ready to reveal it. -->
+      <article class="garage-lot reveal">
+        <div class="garage-grid">
+          <div class="garage-copy">
+            <p class="garage-kicker">🏷️ PRIVATE SALE · ENQUIRIES OPEN</p>
+            <h3 class="garage-name">One of my builds<br />is up for sale.</h3>
+            <p class="garage-desc">
+              I designed, built, and shipped a product end to end — solo. It's real, it works,
+              and it's ready for an owner who can take it further than I can on my own. If you're
+              after a <strong>working app with room to grow</strong>, the door's open.
+            </p>
+            <div class="garage-perks">
+              <span>📦 Full source &amp; assets</span>
+              <span>🤝 Clean handover</span>
+              <span>🧑‍💻 Shipped by one engineer</span>
+            </div>
+            <div class="garage-cta">
+              <a href="mailto:atharva.3vedi@gmail.com?subject=Enquiry%20about%20your%20app%20for%20sale" class="btn btn-primary">📻 Enquire about the sale</a>
+            </div>
+          </div>
+
+          <div class="garage-stage" aria-label="A car under a cover, waiting to be sold" role="img">
+            <svg class="covered-car" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="silk" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#3b404c" />
+                  <stop offset="0.55" stop-color="#2a2e38" />
+                  <stop offset="1" stop-color="#1b1e26" />
+                </linearGradient>
+              </defs>
+              <!-- spotlight pool -->
+              <ellipse cx="180" cy="198" rx="150" ry="18" fill="rgba(255,255,255,0.06)" />
+              <!-- wheels peeking under the cover -->
+              <circle cx="104" cy="188" r="19" fill="#0c0d11" />
+              <circle cx="256" cy="188" r="19" fill="#0c0d11" />
+              <!-- a sliver of the car showing beneath the hem -->
+              <rect x="150" y="150" width="60" height="22" rx="6" fill="var(--accent)" opacity="0.5" />
+              <!-- the draped cover -->
+              <path d="M34 186 Q34 148 82 130 Q120 116 150 112 Q182 84 236 92 Q302 100 326 142
+                       Q334 162 328 186 Q302 178 282 186 Q252 178 226 186 Q192 178 160 186
+                       Q120 178 92 186 Q58 190 34 186 Z"
+                    fill="url(#silk)" stroke="rgba(255,255,255,0.10)" stroke-width="1" />
+              <!-- fold shading -->
+              <path d="M150 114 Q160 150 156 184" stroke="rgba(255,255,255,0.06)" stroke-width="6" fill="none" stroke-linecap="round" />
+              <path d="M244 96 Q250 148 248 182" stroke="rgba(0,0,0,0.28)" stroke-width="9" fill="none" stroke-linecap="round" />
+              <!-- accent piping along the ridge -->
+              <path d="M150 112 Q182 84 236 92" stroke="var(--accent)" stroke-width="2" fill="none" opacity="0.6" />
+            </svg>
+            <div class="sale-tag"><span class="sale-tag-hole"></span>FOR SALE</div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===================== TEAM RADIO / FUN ===================== -->
+    <section class="section radio-sec" id="radio">
+      <div class="section-head">
+        <span class="sec-index">06</span>
+        <h2 class="sec-title">Team Radio</h2>
+        <span class="sec-tag">// off-throttle, unserious</span>
+      </div>
+
+      <div class="radio-grid">
+        <!-- Joke box -->
+        <div class="radio-card jokebox reveal">
+          <div class="rc-head">📻 <span>RADIO CHECK</span></div>
+          <p class="joke" id="jokeText">Press the button. I promise nothing.</p>
+          <button class="btn btn-primary" id="jokeBtn">🎙️ Give me your funniest joke</button>
+        </div>
+
+        <!-- Most painful day -->
+        <div class="radio-card painbox reveal">
+          <div class="rc-head">🩹 <span>BOX BOX — MY MOST PAINFUL DAY</span></div>
+          <div class="pain-card" id="painCard">
+            <div class="pain-front">
+              <p>Some days the car catches fire. Tap to open the incident report.</p>
+              <span class="tap-hint">tap to reveal ▸</span>
+            </div>
+            <div class="pain-back">
+              <p class="edit">
+                The one where I ran a "quick" migration on prod at 11pm, watched the rollback
+                fail <em>twice</em>, and learned what a <code>DROP</code> with no <code>WHERE</code>
+                really costs. Restored from a backup I'd nearly forgotten to take. Ate humble
+                pie, wrote the postmortem, never trusted "quick" again.
+              </p>
+              <span class="tap-hint">(edit this with your real war story) ◂ tap to close</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reaction game -->
+        <div class="radio-card reaction reveal">
+          <div class="rc-head">🚦 <span>REACTION TEST</span></div>
+          <p class="react-info" id="reactInfo">Beat a real F1 start. Wait for lights out, then tap. Jump the start and it's a penalty.</p>
+          <div class="react-lights" id="reactLights">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <button class="btn btn-primary" id="reactBtn">Start the sequence</button>
+          <p class="react-result" id="reactResult"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PIT WALL / CONTACT ===================== -->
+    <section class="section pitwall-sec" id="pitwall">
+      <div class="section-head">
+        <span class="sec-index">07</span>
+        <h2 class="sec-title">Pit Wall</h2>
+        <span class="sec-tag">// radio in</span>
+      </div>
+
+      <div class="pitwall">
+        <p class="pw-lead">Got a seat for me, a project, or an offer on the app? Open the channel.</p>
+        <div class="pw-links">
+          <a href="mailto:atharva.3vedi@gmail.com" class="pw-link">
+            <span class="pw-ico">✉️</span>
+            <span class="pw-t">Email</span>
+            <span class="pw-v">atharva.3vedi@gmail.com</span>
+          </a>
+          <a href="#" class="pw-link" data-edit-link>
+            <span class="pw-ico">💼</span>
+            <span class="pw-t">LinkedIn</span>
+            <span class="pw-v">/in/atharva-trivedi</span>
+          </a>
+          <a href="#" class="pw-link" data-edit-link>
+            <span class="pw-ico">🐙</span>
+            <span class="pw-t">GitHub</span>
+            <span class="pw-v">@atharvatrivedi</span>
+          </a>
+          <a href="tel:+919993941535" class="pw-link">
+            <span class="pw-ico">📞</span>
+            <span class="pw-t">Phone</span>
+            <span class="pw-v">+91 99939 41535</span>
+          </a>
+        </div>
+        <a href="assets/atharva-trivedi-resume.pdf" class="btn btn-primary pw-cv" download>⬇ Download the full Race Card (CV)</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="checker" aria-hidden="true"></div>
+    <div class="footer-inner">
+      <p>🏁 Built in the pit lane · powered by curiosity &amp; caffeine</p>
+      <p class="foot-copy">© 2026 Atharva Trivedi · Driver #3 · <span id="konamiHint">psst — type <strong>44</strong>, or the Konami code 😼</span></p>
+    </div>
+  </footer>
+
+  <!-- Safety car easter egg banner -->
+  <div class="safety-car" id="safetyCar" aria-hidden="true">
+    🚨 SAFETY CAR DEPLOYED 🐱 — bunch up, no overtaking
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
