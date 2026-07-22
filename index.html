@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atharva Trivedi — AI/ML Engineer · Driver #3</title>
+  <title>Atharva Trivedi — AI/ML Engineer · Driver #95</title>
   <meta name="description" content="Atharva Trivedi — AI/ML software engineer racing for Ericsson's 5G RAN program. LLM agents, RAG pipelines, full-stack systems. Portfolio of a racing cat." />
   <meta name="theme-color" content="#0a0b0f" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Atharva Trivedi — AI/ML Engineer · Driver #3" />
+  <meta property="og:title" content="Atharva Trivedi — AI/ML Engineer · Driver #95" />
   <meta property="og:description" content="LLM agents, RAG pipelines, 5G RAN, and a cat at the wheel. Take a lap." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://atharva3vedi.com" />
@@ -180,6 +180,27 @@
               </g>
             </g>
           </svg>
+
+          <!-- Overtaking mini-game — replaces the car when you hit "Race me" -->
+          <div class="race-game" id="raceGame" hidden>
+            <canvas id="raceCanvas" width="640" height="360" aria-label="Overtaking mini-game"></canvas>
+            <div class="rg-hud">
+              <span id="rgPos">P20</span>
+              <span id="rgScore">0 overtakes</span>
+              <span id="rgBest"></span>
+            </div>
+            <button class="rg-exit" id="rgExit" aria-label="Exit game">✕ exit</button>
+            <div class="rg-controls">
+              <button id="rgUp" aria-label="Move up">▲</button>
+              <button id="rgDown" aria-label="Move down">▼</button>
+            </div>
+            <div class="rg-overlay" id="rgOverlay">
+              <p class="rg-title">GRAND PRIX</p>
+              <p class="rg-sub">↑ / ↓ to change lane · overtake, don't crash</p>
+              <button class="btn btn-primary" id="rgStart">Lights out ▸</button>
+            </div>
+          </div>
+          <button class="race-me" id="raceMe">🏎️ Race me — overtake with ↑ / ↓</button>
         </div>
       </div>
 
@@ -481,7 +502,7 @@
         </article>
 
         <!-- LTE-RRC AI -->
-        <article class="proj reveal featured-proj">
+        <article class="proj reveal">
           <div class="proj-pos">P2</div>
           <div class="proj-head">
             <h3>LTE-RRC AI Release Advisor</h3>
@@ -521,25 +542,7 @@
           </div>
         </article>
 
-        <!-- AlgoJudge -->
-        <article class="proj reveal">
-          <div class="proj-pos">P4</div>
-          <div class="proj-head">
-            <h3>AlgoJudge.xyz</h3>
-            <p class="proj-tag">Online judge platform</p>
-          </div>
-          <p class="proj-desc">
-            A full-stack online judge with scalable APIs for auth, submissions, and code
-            evaluation pipelines — containerized with Docker and deployed on AWS EC2.
-          </p>
-          <div class="proj-stack">
-            <span>Django REST</span><span>ReactJS</span><span>Docker</span><span>AWS</span><span>EC2</span>
-          </div>
-          <div class="proj-links">
-            <a href="https://github.com/atharva3vedi/algojudge" class="plink" target="_blank" rel="noopener">◆ GitHub</a>
-            <a href="https://www.algojudge.xyz/" class="plink" target="_blank" rel="noopener">▶ Live</a>
-          </div>
-        </article>
+
       </div>
     </section>
 
@@ -631,7 +634,7 @@
               <span class="tap-hint">tap to reveal ▸</span>
             </div>
             <div class="pain-back">
-              <p class="edit">
+              <p>
                 The time I set up an infinite pull loop on Groq's API and burned through <strong>every token in my quota</strong> before my morning coffee — just staring at the cursor blinking while tokens flew. Turned out I'd forgotten a break condition in my streaming parser. My Groq dashboard went to $0.00 in 47 seconds. Learned to always test with <code>max_tokens=5</code> first.
               </p>
               <span class="tap-hint">◂ tap to close</span>
@@ -694,7 +697,7 @@
     <div class="checker" aria-hidden="true"></div>
     <div class="footer-inner">
       <p>🏁 Built in the pit lane · powered by curiosity &amp; caffeine</p>
-      <p class="foot-copy">© 2026 Atharva Trivedi · Driver #3 · <span id="konamiHint">psst — type <strong>44</strong>, or the Konami code 😼</span></p>
+      <p class="foot-copy">© 2026 Atharva Trivedi · Driver #95 · <span id="konamiHint">psst — type <strong>44</strong>, or the Konami code 😼</span></p>
     </div>
   </footer>
 

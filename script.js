@@ -499,4 +499,257 @@
       console.log("%cType 44 for a Hamilton moment. Also try: meow, box, drs — and the Konami code. — Atharva, Driver #95", "color:#8a8f9a");
     } catch (_) {}
   })();
+
+  /* ---------- Hero overtaking mini-game · Spa-Francorchamps ---------- */
+  (function raceGameModule() {
+    const wrap = $("#raceGame");
+    const canvas = $("#raceCanvas");
+    const carSvg = $(".f1car");
+    const speedLines = $(".speed-lines");
+    const raceMeBtn = $("#raceMe");
+    if (!wrap || !canvas || !raceMeBtn) return;
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width, H = canvas.height;
+
+    // track geometry: asphalt in the middle, grass/gravel/kerb verges top & bottom
+    const LANES = 3, BORDER = 48;
+    const trackTop = BORDER, trackBot = H - BORDER, trackH = H - 2 * BORDER, laneH = trackH / LANES;
+    const laneY = (i) => trackTop + laneH * (i + 0.5);
+    const OL = 92, PL = 96, playerX = 58; // opponent length, player length, player x
+
+    // 2026 F1 grid — real numbers + team colours (easter egg)
+    const GRID = [
+      { n: "1",  d: "NORRIS",     c: "#ff8000", f: "#111" },
+      { n: "81", d: "PIASTRI",    c: "#ff8000", f: "#111" },
+      { n: "44", d: "HAMILTON",   c: "#e8002d", f: "#fff" },
+      { n: "16", d: "LECLERC",    c: "#e8002d", f: "#fff" },
+      { n: "3",  d: "VERSTAPPEN", c: "#14264f", f: "#fff" },
+      { n: "6",  d: "HADJAR",     c: "#14264f", f: "#fff" },
+      { n: "63", d: "RUSSELL",    c: "#00d2be", f: "#111" },
+      { n: "12", d: "ANTONELLI",  c: "#00d2be", f: "#111" },
+      { n: "23", d: "ALBON",      c: "#37beff", f: "#111" },
+      { n: "55", d: "SAINZ",      c: "#37beff", f: "#111" },
+      { n: "27", d: "HULKENBERG", c: "#cdd1d8", f: "#111" },
+      { n: "5",  d: "BORTOLETO",  c: "#cdd1d8", f: "#111" },
+      { n: "14", d: "ALONSO",     c: "#229971", f: "#fff" },
+      { n: "18", d: "STROLL",     c: "#229971", f: "#fff" },
+      { n: "10", d: "GASLY",      c: "#ff3fa4", f: "#111" },
+      { n: "43", d: "COLAPINTO",  c: "#ff3fa4", f: "#111" },
+      { n: "31", d: "OCON",       c: "#6e7681", f: "#fff" },
+      { n: "87", d: "BEARMAN",    c: "#6e7681", f: "#fff" },
+      { n: "30", d: "LAWSON",     c: "#3b5bdb", f: "#fff" },
+      { n: "41", d: "LINDBLAD",   c: "#3b5bdb", f: "#fff" },
+      { n: "11", d: "PEREZ",      c: "#c6a15b", f: "#111" },
+      { n: "77", d: "BOTTAS",     c: "#c6a15b", f: "#111" },
+    ];
+    const CORNERS = ["LA SOURCE", "EAU ROUGE", "RAIDILLON", "KEMMEL STRAIGHT", "LES COMBES", "POUHON", "BLANCHIMONT", "BUS STOP"];
+
+    const overlay = $("#rgOverlay");
+    const elPos = $("#rgPos"), elScore = $("#rgScore"), elBest = $("#rgBest");
+    const rgTitle = overlay.querySelector(".rg-title");
+    const rgSub = overlay.querySelector(".rg-sub");
+    const rgStart = $("#rgStart");
+
+    let state = "idle"; // idle | running | over
+    let player, opps, overtakes, best = 0, speed, spawnT, roadOffset, lastRAF, lastLane, lastDrv;
+    let wet, sfX, cornerT, cornerIdx, passMsg, passT;
+
+    function reset() {
+      player = { lane: 1, y: laneY(1) };
+      opps = []; overtakes = 0; speed = 200; spawnT = 0; roadOffset = 0; lastLane = -1; lastDrv = -1;
+      wet = false; sfX = W + 500; cornerT = 0; cornerIdx = 0; passMsg = ""; passT = 0;
+      updateHud();
+    }
+    function updateHud() {
+      const pos = Math.max(1, 20 - overtakes);
+      elPos.textContent = pos === 1 ? "P1 🏆" : "P" + pos;
+      elScore.textContent = overtakes + (overtakes === 1 ? " overtake" : " overtakes");
+      elBest.textContent = best ? "best " + best : "";
+    }
+    function spawn() {
+      let lane; do { lane = Math.floor(Math.random() * LANES); } while (lane === lastLane); lastLane = lane;
+      let di; do { di = Math.floor(Math.random() * GRID.length); } while (di === lastDrv); lastDrv = di;
+      opps.push({ x: W + 80, lane, drv: GRID[di], passed: false });
+    }
+    function start() {
+      reset(); overlay.hidden = true; state = "running";
+      lastRAF = performance.now(); revEngine(true);
+      requestAnimationFrame(loop);
+    }
+    function gameOver() {
+      state = "over";
+      if (overtakes > best) best = overtakes;
+      const pos = Math.max(1, 20 - overtakes);
+      rgTitle.textContent = "CRASH! 💥";
+      rgSub.textContent = "Finished P" + pos + " · " + overtakes + " overtaken";
+      rgStart.textContent = "Race again ▸";
+      overlay.hidden = false; updateHud();
+    }
+
+    function loop(now) {
+      if (state !== "running") return;
+      let dt = (now - lastRAF) / 1000; lastRAF = now;
+      if (dt > 0.05) dt = 0.05;
+      speed = Math.min(560, 200 + overtakes * 8);
+      const gap = Math.max(1.0, 1.8 - overtakes * 0.02);
+      spawnT += dt; if (spawnT >= gap) { spawnT = 0; spawn(); }
+      roadOffset = (roadOffset + speed * dt) % 48;
+      sfX -= speed * dt; if (sfX < -40) sfX = W + 900 + Math.random() * 900;
+      cornerT += dt; if (cornerT > 5) { cornerT = 0; cornerIdx = (cornerIdx + 1) % CORNERS.length; }
+      if (passT > 0) passT -= dt;
+      player.y += (laneY(player.lane) - player.y) * Math.min(1, dt * 14);
+      for (const o of opps) {
+        o.x -= speed * dt;
+        if (!o.passed && o.x + OL < playerX) {
+          o.passed = true; overtakes++; updateHud();
+          passMsg = o.drv.n === "3" ? "P3 DOWN — GET IN THERE! 🐐" : "OVERTOOK " + o.drv.d;
+          passT = 1.3;
+          if (overtakes % 5 === 0) revEngine(false);
+        }
+        if (o.lane === player.lane && o.x < playerX + PL * 0.8 && o.x + OL > playerX + PL * 0.15) { return gameOver(); }
+      }
+      opps = opps.filter((o) => o.x > -OL - 30);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    function roundRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    // top-down F1 car, pointing right
+    function drawF1(x, y, L, color, num, fg) {
+      const bw = 11;
+      ctx.save(); ctx.translate(x, y);
+      ctx.fillStyle = "rgba(0,0,0,0.30)"; ctx.beginPath(); ctx.ellipse(L * 0.5, 4, L * 0.5, 15, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = "#191a1f"; // wheels
+      roundRect(L * 0.12, -20, L * 0.16, 13, 3); ctx.fill();
+      roundRect(L * 0.12, 7, L * 0.16, 13, 3); ctx.fill();
+      roundRect(L * 0.70, -20, L * 0.16, 13, 3); ctx.fill();
+      roundRect(L * 0.70, 7, L * 0.16, 13, 3); ctx.fill();
+      ctx.fillStyle = "#26282e"; roundRect(-3, -19, 8, 38, 2); ctx.fill(); // rear wing
+      ctx.fillStyle = color; roundRect(-3, -19, 3, 38, 2); ctx.fill();
+      ctx.fillStyle = "#26282e"; roundRect(L * 0.86, -17, 8, 34, 2); ctx.fill(); // front wing
+      ctx.fillStyle = color; // body tapered to nose
+      ctx.beginPath();
+      ctx.moveTo(5, -bw); ctx.lineTo(L * 0.62, -bw); ctx.lineTo(L * 0.99, -3.5);
+      ctx.lineTo(L * 0.99, 3.5); ctx.lineTo(L * 0.62, bw); ctx.lineTo(5, bw); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); // sidepods
+      ctx.moveTo(L * 0.30, -bw); ctx.quadraticCurveTo(L * 0.44, -bw - 4, L * 0.58, -bw);
+      ctx.lineTo(L * 0.58, bw); ctx.quadraticCurveTo(L * 0.44, bw + 4, L * 0.30, bw); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.14)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(L * 0.9, 0); ctx.stroke();
+      ctx.fillStyle = "rgba(0,0,0,0.62)"; ctx.beginPath(); ctx.ellipse(L * 0.55, 0, L * 0.08, 5.5, 0, 0, 7); ctx.fill(); // cockpit
+      ctx.strokeStyle = "rgba(255,255,255,0.22)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(L * 0.62, 0, 6, -1.4, 1.4); ctx.stroke(); // halo
+      ctx.fillStyle = fg; ctx.font = "700 13px 'Titillium Web', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(num, L * 0.22, 0); ctx.textBaseline = "alphabetic";
+      ctx.restore();
+    }
+
+    function drawKerb(y0, h, phase) {
+      const bw2 = 24, start = -(((roadOffset * 2) + phase) % (bw2 * 2));
+      for (let x = start, i = 0; x < W; x += bw2, i++) {
+        ctx.fillStyle = i % 2 === 0 ? "#d21e1e" : "#eef1f4";
+        ctx.fillRect(Math.floor(x), y0, bw2 + 1, h);
+      }
+    }
+    function drawTrees(edgeY, dir) {
+      ctx.fillStyle = "#183a20";
+      const gap = 58, off = (roadOffset * 0.9) % gap;
+      for (let x = -off - gap; x < W + gap; x += gap) {
+        const th = 16 + ((Math.floor(x / gap) * 37) % 9 + 9) % 9;
+        ctx.beginPath(); ctx.moveTo(x, edgeY); ctx.lineTo(x + 9 * dir, edgeY - dir * th); ctx.lineTo(x + 18 * dir, edgeY); ctx.closePath(); ctx.fill();
+      }
+    }
+    function drawWorld() {
+      // grass + mown stripes + trees
+      ctx.fillStyle = "#2f7d33"; ctx.fillRect(0, 0, W, trackTop); ctx.fillRect(0, trackBot, W, H - trackBot);
+      ctx.fillStyle = "rgba(255,255,255,0.05)";
+      const sw = 46, go = (roadOffset * 0.6) % (sw * 2);
+      for (let x = -go; x < W; x += sw * 2) { ctx.fillRect(x, 0, sw, 18); ctx.fillRect(x, H - 18, sw, 18); }
+      drawTrees(6, 1); drawTrees(H - 6, -1);
+      // gravel + speckle
+      ctx.fillStyle = "#c9a86a"; ctx.fillRect(0, trackTop - 28, W, 16); ctx.fillRect(0, trackBot + 12, W, 16);
+      ctx.fillStyle = "rgba(0,0,0,0.14)";
+      for (let i = 0; i < 46; i++) { const gx = ((i * 61 - roadOffset * 0.8) % W + W) % W; ctx.fillRect(gx, trackTop - 27 + (i % 14), 2, 2); ctx.fillRect((gx + 120) % W, trackBot + 13 + (i % 14), 2, 2); }
+      // red/white kerbs
+      drawKerb(trackTop - 12, 12, 0); drawKerb(trackBot, 12, 12);
+      // asphalt
+      ctx.fillStyle = wet ? "#23272f" : "#2c303a"; ctx.fillRect(0, trackTop, W, trackH);
+      if (wet) { ctx.fillStyle = "rgba(120,160,220,0.06)"; ctx.fillRect(0, trackTop, W, trackH); }
+      // lane dashes
+      ctx.strokeStyle = "rgba(255,255,255,0.38)"; ctx.lineWidth = 3; ctx.setLineDash([30, 26]); ctx.lineDashOffset = -roadOffset;
+      for (let i = 1; i < LANES; i++) { ctx.beginPath(); ctx.moveTo(0, trackTop + laneH * i); ctx.lineTo(W, trackTop + laneH * i); ctx.stroke(); }
+      ctx.setLineDash([]);
+      // start/finish checker
+      if (sfX < W + 40) {
+        const cw = 9, rows = Math.ceil(trackH / cw);
+        for (let r = 0; r < rows; r++) for (let c = 0; c < 4; c++) {
+          ctx.fillStyle = (r + c) % 2 === 0 ? "#f4f5f7" : "#111318";
+          ctx.fillRect(sfX + c * cw, trackTop + r * cw, cw, cw);
+        }
+      }
+    }
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      drawWorld();
+      for (const o of opps) drawF1(o.x, laneY(o.lane), OL, o.drv.c, o.drv.n, o.drv.f);
+      drawF1(playerX, player.y, PL, "#e10600", "95", "#fff");
+      if (wet) {
+        ctx.strokeStyle = "rgba(200,220,255,0.35)"; ctx.lineWidth = 1;
+        for (let i = 0; i < 60; i++) { const rx = (i * 53 + roadOffset * 6) % W, ry = (i * 97 + roadOffset * 10) % H; ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 6, ry + 12); ctx.stroke(); }
+      }
+      // corner name
+      ctx.fillStyle = "rgba(0,0,0,0.55)"; roundRect(10, trackBot - 22, 172, 18, 4); ctx.fill();
+      ctx.fillStyle = "#ffd400"; ctx.font = "700 11px 'Share Tech Mono', monospace"; ctx.textAlign = "left"; ctx.fillText("SECTOR ▸ " + CORNERS[cornerIdx], 16, trackBot - 9);
+      // overtake callout
+      if (passT > 0) {
+        ctx.globalAlpha = Math.min(1, passT * 1.6);
+        ctx.textAlign = "center"; ctx.font = "700 14px 'Rajdhani', sans-serif";
+        const tw = ctx.measureText(passMsg).width + 22;
+        ctx.fillStyle = passMsg.indexOf("GET IN") >= 0 ? "#b026ff" : "rgba(10,11,15,0.82)";
+        roundRect(W / 2 - tw / 2, trackTop + 6, tw, 22, 5); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.fillText(passMsg, W / 2, trackTop + 21);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function changeLane(d) { if (state === "running") player.lane = Math.max(0, Math.min(LANES - 1, player.lane + d)); }
+
+    addEventListener("keydown", (e) => {
+      if (wrap.hidden) return;
+      if (e.key === "ArrowUp") { e.preventDefault(); changeLane(-1); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); changeLane(1); }
+      else if (e.key === "r" || e.key === "R") { wet = !wet; if (state !== "running") draw(); }
+      else if ((e.key === " " || e.key === "Enter") && state !== "running") { e.preventDefault(); start(); }
+    });
+    $("#rgUp").addEventListener("click", () => changeLane(-1));
+    $("#rgDown").addEventListener("click", () => changeLane(1));
+    rgStart.addEventListener("click", start);
+
+    function openGame() {
+      wrap.hidden = false;
+      if (carSvg) carSvg.style.display = "none";
+      if (speedLines) speedLines.style.display = "none";
+      raceMeBtn.style.display = "none";
+      state = "idle";
+      rgTitle.textContent = "SPA · BELGIAN GP 🇧🇪";
+      rgSub.textContent = "↑ / ↓ change lane · overtake the 2026 grid · R = rain";
+      rgStart.textContent = "Lights out ▸";
+      overlay.hidden = false; reset(); draw();
+    }
+    function closeGame() {
+      state = "idle"; wrap.hidden = true;
+      if (carSvg) carSvg.style.display = "";
+      if (speedLines) speedLines.style.display = "";
+      raceMeBtn.style.display = "";
+    }
+    raceMeBtn.addEventListener("click", openGame);
+    $("#rgExit").addEventListener("click", closeGame);
+  })();
 })();
