@@ -24,7 +24,7 @@ atharva-portfolio/
 ├── script.js       ← lights, reaction game, jokes, paw trail, easter egg
 ├── favicon.svg      ← racing cat tab icon
 ├── assets/
-│   └── atharva-trivedi-resume.pdf
+│   └── Atharva_Trivedi_Resume.pdf
 └── README.md        ← you are here, obviously
 ```
 
