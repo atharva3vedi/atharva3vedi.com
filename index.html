@@ -47,6 +47,7 @@
       <a href="#history">Race History</a>
       <a href="#podium">Podium</a>
       <a href="#garage">Garage</a>
+      <a href="#ask">Ask AI</a>
       <a href="#radio">Team Radio</a>
       <a href="#pitwall" class="nav-cta">Pit Wall</a>
     </nav>
@@ -254,10 +255,11 @@
           </p>
           <p>
             I've shipped production LLM agents and RAG pipelines, launched a full travel
-            app solo to the Play Store, and I'm now applying that to Ericsson's 5G RAN
-            program — implementing AI to the MAC layer (Layer 2) of the protocol stack
-            to optimise scheduling and resource allocation. I ramp into new technical
-            domains fast and turn that into measurable impact.
+            app solo to the App Store and Play Store, and I'm now applying that to
+            Ericsson's 5G RAN program — driving Layer 2 downlink test automation with
+            agentic AI tools and owning the Physical AI side of a robotics Centre of
+            Excellence. I ramp into new technical domains fast and turn that into
+            measurable impact.
           </p>
           <p>
             Off the clock I'm the kind of engineer who'd happily name a variable
@@ -349,9 +351,9 @@
             <p class="race-team">GlobalLogic — Ericsson 5G RAN Program</p>
             <p class="race-date">Aug 2025 — Present</p>
             <ul>
-              <li>Applied agentic AI + prompt engineering to prototype automation across RAN data pipelines — <strong>+40% delivery efficiency</strong>.</li>
-              <li>Build and maintain Java Spring Boot microservices &amp; REST APIs on a large-scale, multi-vendor 5G data platform under secure-coding standards.</li>
-              <li>Ramped from a non-telecom background to working fluency in RAN architecture within months.</li>
+              <li>Write and maintain test cases for new Layer 2 downlink code using agentic AI tools (Kiro, Claude), applying prompt engineering to <strong>accelerate coverage</strong> and cut manual test-writing effort.</li>
+              <li>Own the Physical AI side of a robotics Centre of Excellence — managing the robot SDK and driving hardware decisions from sourcing robots to defining what gets built.</li>
+              <li>Partner with distributed engineering and telecom domain teams to troubleshoot integration issues, ramping from a non-telecom background to working fluency in RAN architecture within weeks.</li>
             </ul>
           </div>
         </article>
@@ -491,15 +493,17 @@
               <p class="proj-tag">Production travel platform · sole engineer</p>
             </div>
             <p class="proj-desc">
-              Shipped a full travel app end-to-end — architecture to Play Store launch — with
-              real-time chat (Stream), voice/video calls (Agora), live location (Mapbox), an
-              AI itinerary planner, and visa-application workflows on a Firebase/Supabase backend.
+              Shipped a full travel app end-to-end as the sole engineer — design through App Store
+              and Play Store launch — with real-time chat (Stream), voice/video calls (Agora),
+              live location (Mapbox), a Groq-powered itinerary planner, and visa-application
+              workflows on a cloud-native Firebase/Supabase backend.
             </p>
             <div class="proj-stack">
               <span>Flutter</span><span>Firebase</span><span>Supabase</span><span>Stream</span><span>Agora</span><span>Mapbox</span>
             </div>
             <div class="proj-links">
               <a href="https://play.google.com/store/apps/details?id=com.wanderbuddy.wanderbuddy" class="plink" target="_blank" rel="noopener">▶ Play Store</a>
+              <a href="https://apps.apple.com/app/id6795848498" class="plink" target="_blank" rel="noopener">▶ App Store</a>
             </div>
           </article>
           <div class="podium-step"><span class="pod-place">1</span></div>
@@ -623,6 +627,29 @@
         <span class="sec-tag">// off-throttle, unserious</span>
       </div>
 
+      <!-- Ask my AI (Groq-powered, speaks in Atharva's voice) -->
+      <div class="ai-card reveal" id="ask">
+        <div class="ai-head">
+          <span class="ai-live"><span class="ai-dot"></span>LIVE</span>
+          <span class="ai-title">📻 TALK TO MY RACE ENGINEER</span>
+          <span class="ai-note">built by me · hosted by me · running on Qwen</span>
+        </div>
+        <div class="ai-log" id="aiLog">
+          <div class="ai-msg ai-bot">Oi. I'm Atharva's AI — basically him after two coffees. Ask me anything: the work, the projects, my F1 takes, Miu, whatever. Fair warning, I'm a bit chaotic.</div>
+        </div>
+        <div class="ai-chips" id="aiChips">
+          <button class="ai-chip" type="button">What actually drives you?</button>
+          <button class="ai-chip" type="button">Your hottest F1 take?</button>
+          <button class="ai-chip" type="button">Tell me about Miu</button>
+          <button class="ai-chip" type="button">Are you any good at C?</button>
+          <button class="ai-chip" type="button">Why sell WanderBuddy?</button>
+        </div>
+        <form class="ai-form" id="aiForm">
+          <input class="ai-input" id="aiInput" type="text" maxlength="500" autocomplete="off" placeholder="Ask me something…" aria-label="Ask Atharva's AI" />
+          <button class="ai-send" id="aiSend" type="submit" aria-label="Send">➤</button>
+        </form>
+      </div>
+
       <div class="radio-grid">
         <!-- Joke box -->
         <div class="radio-card jokebox reveal">
@@ -695,6 +722,12 @@
           </a>
         </div>
         <a href="assets/atharva_trivedi_resume.pdf" class="btn btn-primary pw-cv" download="Atharva_Trivedi_Resume.pdf">⬇ Download the full Race Card (CV)</a>
+
+        <div class="pw-badge">
+          <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="atharva-trivedi" data-version="v1">
+            <a class="badge-base__link LI-simple-link" href="https://www.linkedin.com/in/atharva-trivedi?trk=profile-badge" target="_blank" rel="noopener">Atharva Trivedi</a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -714,5 +747,6 @@
   </div>
 
   <script src="script.js"></script>
+  <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
 </body>
 </html>

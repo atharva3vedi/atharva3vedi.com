@@ -569,6 +569,50 @@ a { color: inherit; text-decoration: none; }
 /* =========================================================
    TEAM RADIO / FUN
    ========================================================= */
+/* ===== Ask my AI ===== */
+.ai-card {
+  background: linear-gradient(160deg, var(--carbon-3), var(--carbon-2));
+  border: 1px solid var(--accent); border-radius: 16px; padding: 22px;
+  margin-bottom: 22px; box-shadow: 0 0 34px rgba(225, 6, 0, 0.10);
+}
+.ai-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.ai-live { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 1.5px; color: #38e06a; }
+.ai-dot { width: 8px; height: 8px; border-radius: 50%; background: #38e06a; box-shadow: 0 0 8px #38e06a; animation: aipulse 1.4s ease-in-out infinite; }
+@keyframes aipulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.ai-title { font-family: var(--display); font-weight: 700; font-size: 1.1rem; letter-spacing: 1px; }
+.ai-note { font-family: var(--mono); font-size: 0.72rem; color: var(--muted-2); margin-left: auto; }
+.ai-log {
+  background: var(--carbon); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+}
+.ai-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.98rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.ai-bot { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); border-bottom-left-radius: 3px; }
+.ai-user { align-self: flex-end; background: var(--accent); color: var(--on-accent); border-bottom-right-radius: 3px; }
+.ai-typing { align-self: flex-start; display: inline-flex; gap: 4px; padding: 12px 14px; }
+.ai-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: aitype 1s infinite; }
+.ai-typing span:nth-child(2) { animation-delay: 0.15s; }
+.ai-typing span:nth-child(3) { animation-delay: 0.30s; }
+@keyframes aitype { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
+.ai-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.ai-chip {
+  font-family: var(--head); font-weight: 600; font-size: 0.82rem; cursor: pointer;
+  background: var(--panel); border: 1px solid var(--line-2); color: var(--muted); border-radius: 18px; padding: 6px 13px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.ai-chip:hover { border-color: var(--accent); color: var(--text); }
+.ai-form { display: flex; gap: 10px; }
+.ai-input {
+  flex: 1; min-width: 0; background: var(--carbon); border: 1px solid var(--line-2); border-radius: 10px;
+  padding: 12px 14px; color: var(--text); font-family: var(--body); font-size: 1rem;
+}
+.ai-input:focus { outline: none; border-color: var(--accent); }
+.ai-send {
+  width: 48px; border: 0; border-radius: 10px; background: var(--accent); color: var(--on-accent);
+  font-size: 1.1rem; cursor: pointer; transition: transform 0.15s;
+}
+.ai-send:hover { transform: translateY(-2px); }
+.ai-send:disabled { opacity: 0.5; cursor: default; transform: none; }
+
 .radio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 .radio-card {
   background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 24px;
@@ -625,6 +669,8 @@ a { color: inherit; text-decoration: none; }
 .pw-t { font-family: var(--head); font-weight: 700; }
 .pw-v { font-family: var(--mono); font-size: 0.76rem; color: var(--muted-2); word-break: break-all; }
 .pw-cv { margin: 0 auto; }
+.pw-badge { display: flex; justify-content: center; margin-top: 34px; }
+.pw-badge .badge-base { border-radius: 12px; overflow: hidden; }
 
 /* =========================================================
    FOOTER
