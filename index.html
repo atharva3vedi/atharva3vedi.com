@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Atharva Trivedi — AI/ML Engineer · Driver #95</title>
   <meta name="description" content="Atharva Trivedi — AI/ML software engineer racing for Ericsson's 5G RAN program. LLM agents, RAG pipelines, and two apps shipped solo (FitTrek, WanderBuddy). Portfolio of a racing cat." />
-  <meta name="theme-color" content="#0a0b0f" />
+  <meta name="theme-color" content="#07080b" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Atharva Trivedi — AI/ML Engineer · Driver #95" />
@@ -18,7 +18,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Titillium+Web:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -37,7 +37,7 @@
 
   <!-- ===================== NAV ===================== -->
   <header class="nav" id="top">
-    <a class="nav-brand" href="#top" aria-label="Home">
+    <a class="nav-brand" href="#hero" aria-label="Home">
       <span class="brand-num">95</span>
       <span class="brand-name">A. TRIVEDI</span>
     </a>
@@ -47,33 +47,34 @@
       <a href="#history">Race History</a>
       <a href="#podium">Podium</a>
       <a href="#garage">Garage</a>
-      <a href="#ask">Ask AI</a>
       <a href="#radio">Team Radio</a>
       <a href="#pitwall" class="nav-cta">Pit Wall</a>
     </nav>
+    <div class="nav-tools">
+      <!-- Tire-compound theme switcher -->
+      <div class="compound-switch" id="compoundSwitch" role="group" aria-label="Tire compound (accent color)">
+        <button class="tyre soft active" data-accent="#e10600" title="Soft — red">S</button>
+        <button class="tyre medium" data-accent="#ffd400" title="Medium — yellow">M</button>
+        <button class="tyre hard" data-accent="#e6e6e6" title="Hard — white">H</button>
+      </div>
+
+      <!-- Engine-sound toggle -->
+      <button class="sound-toggle" id="soundToggle" aria-pressed="true" title="Engine sound on/off">🔊</button>
+    </div>
     <button class="nav-burger" id="burger" aria-label="Menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </header>
 
-  <!-- Tire-compound theme switcher -->
-  <div class="compound-switch" id="compoundSwitch" role="group" aria-label="Tire compound (accent color)">
-    <button class="tyre soft active" data-accent="#e10600" title="Soft — red">S</button>
-    <button class="tyre medium" data-accent="#ffd400" title="Medium — yellow">M</button>
-    <button class="tyre hard" data-accent="#e6e6e6" title="Hard — white">H</button>
-  </div>
-
-  <!-- Engine-sound toggle -->
-  <button class="sound-toggle" id="soundToggle" aria-pressed="true" title="Engine sound on/off">🔊</button>
-
   <main>
     <!-- ===================== HERO ===================== -->
     <section class="hero" id="hero">
       <div class="hero-grain" aria-hidden="true"></div>
+      <div class="hero-95" aria-hidden="true">95</div>
       <div class="hero-inner">
         <div class="hero-copy">
           <p class="kicker"><span class="flag">🏁</span> ROUND 1 · BANGALORE GP · 2026 SEASON</p>
-          <h1 class="hero-name">ATHARVA<br />TRIVEDI</h1>
+          <h1 class="hero-name"><span>ATHARVA</span> <span class="outline">TRIVEDI</span></h1>
           <p class="hero-role">
             <span class="role-static">AI/ML SOFTWARE ENGINEER</span>
             <span class="role-rotate" id="roleRotate" aria-live="polite"></span>
@@ -87,99 +88,67 @@
             <a href="assets/atharva_trivedi_resume.pdf" class="btn btn-ghost" download="Atharva_Trivedi_Resume.pdf">⬇ Race Card (CV)</a>
           </div>
 
-          <!-- Start lights -->
-          <div class="start-lights" id="startLights" aria-hidden="true">
-            <div class="sl-gantry">
-              <span class="sl"></span><span class="sl"></span><span class="sl"></span>
-              <span class="sl"></span><span class="sl"></span>
-            </div>
-            <p class="sl-caption" id="slCaption">LIGHTS OUT AND AWAY WE GO</p>
-          </div>
         </div>
 
         <!-- Racing cat car -->
-        <div class="hero-car" aria-label="A cat driving a Formula 1 car" role="img">
+        <div class="hero-car">
+        <!-- Start lights -->
+        <div class="start-lights" id="startLights" aria-hidden="true">
+          <div class="sl-gantry">
+            <span class="sl"></span><span class="sl"></span><span class="sl"></span>
+            <span class="sl"></span><span class="sl"></span>
+          </div>
+          <p class="sl-caption"><span id="slCaption">LIGHTS OUT AND AWAY WE GO</span> <span class="sl-tip">blip the throttle</span></p>
+        </div>
+        <div class="hud" aria-hidden="true">
+          <span><i>SPEED</i>312 KM/H</span><span><i>GEAR</i>8</span><span class="drs-chip"><i>DRS</i>OPEN</span>
+        </div>
           <div class="speed-lines" aria-hidden="true"></div>
-          <svg class="f1car" viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg">
-            <!-- ground shadow -->
-            <ellipse cx="320" cy="255" rx="240" ry="18" fill="rgba(0,0,0,0.5)" />
-
+          <svg class="f1car" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A cat driving a Formula 1 car">
+            <ellipse cx="520" cy="270" rx="450" ry="14" fill="rgba(0,0,0,0.6)"/>
             <!-- rear wing -->
-            <g class="car-part">
-              <rect x="18" y="120" width="60" height="12" rx="3" fill="var(--car-2)"/>
-              <rect x="24" y="132" width="10" height="60" fill="var(--car-1)"/>
-              <rect x="62" y="132" width="10" height="60" fill="var(--car-1)"/>
-              <rect x="14" y="112" width="68" height="8" rx="3" fill="var(--accent)"/>
-            </g>
-
-            <!-- floor / body -->
-            <path class="car-body" d="M60 196 L120 196 C150 196 165 150 235 150 L360 150
-                 C420 150 430 160 470 168 C520 178 560 176 596 196 L596 210
-                 C560 214 120 214 60 210 Z" fill="var(--car-1)"/>
-            <!-- sidepod accent -->
-            <path d="M235 150 L360 150 C400 150 415 158 445 166 L300 178 L235 172 Z" fill="var(--car-2)"/>
-            <path d="M120 196 C150 196 165 150 235 150 L235 172 L150 190 Z" fill="var(--accent)" opacity="0.85"/>
-
-            <!-- cockpit + halo -->
-            <path class="halo" d="M250 150 C255 118 320 116 330 150" fill="none" stroke="var(--car-3)" stroke-width="7" stroke-linecap="round"/>
-            <rect x="238" y="150" width="120" height="6" rx="3" fill="var(--car-3)"/>
-
-            <!-- nose -->
-            <path d="M470 168 C520 176 590 182 620 196 L596 196 C560 176 520 178 470 168 Z" fill="var(--car-2)"/>
+            <path d="M36 62 L152 62 L152 80 L36 80 Z" fill="var(--accent)"/>
+            <path d="M42 88 L148 88 L148 100 L42 100 Z" fill="#1d212c"/>
+            <path d="M30 54 L60 54 L66 188 L38 188 Z" fill="#151821" stroke="#313645" stroke-width="2"/>
+            <!-- body, livery stripe, engine cover, sidepod, floor -->
+            <path class="car-body" d="M70 214 L84 170 Q120 150 200 140 L330 120 Q380 112 410 96 Q432 84 452 94 L470 128 L560 132 Q640 138 720 154 L880 186 Q944 198 952 208 L948 214 Z" fill="#151821"/>
+            <path d="M150 168 L360 132 Q420 124 470 140 L720 170 L900 200 L898 206 L700 186 L460 156 Q400 148 340 156 L150 182 Z" fill="var(--accent)"/>
+            <path d="M160 152 L330 120 L420 98 L300 134 Z" fill="#1d212c"/>
+            <path d="M270 214 L300 172 Q360 152 470 156 L600 168 L640 214 Z" fill="#0e1015" stroke="#313645" stroke-width="2"/>
+            <rect x="76" y="212" width="820" height="12" rx="4" fill="#0b0c10"/>
             <!-- front wing -->
-            <g>
-              <rect x="588" y="196" width="44" height="8" rx="3" fill="var(--car-2)"/>
-              <rect x="596" y="204" width="40" height="7" rx="2" fill="var(--accent)"/>
-            </g>
-
-            <!-- number roundel -->
-            <circle cx="160" cy="176" r="20" fill="#fff"/>
-            <text x="160" y="184" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="900" font-size="24" fill="var(--car-1)">95</text>
-
+            <path d="M820 240 L978 240 L978 230 L930 222 L836 228 Z" fill="var(--accent)"/>
+            <rect x="962" y="200" width="16" height="42" rx="3" fill="#1d212c"/>
             <!-- THE CAT DRIVER -->
             <g class="cat-driver">
-              <!-- helmet -->
-              <circle cx="290" cy="132" r="26" fill="var(--accent)"/>
-              <path d="M266 134 a24 24 0 0 1 48 0 Z" fill="#0a0b0f" opacity="0.85"/>
-              <rect x="270" y="126" width="40" height="12" rx="6" fill="#7fe9ff" opacity="0.9"/>
-              <!-- cat ears on helmet -->
-              <path d="M270 110 L262 86 L286 104 Z" fill="var(--accent)"/>
-              <path d="M310 110 L318 86 L294 104 Z" fill="var(--accent)"/>
-              <path d="M272 106 L268 94 L280 103 Z" fill="#0a0b0f"/>
-              <path d="M308 106 L312 94 L300 103 Z" fill="#0a0b0f"/>
-              <!-- little cat face peeking (whiskers) -->
-              <g stroke="#fff" stroke-width="1.6" opacity="0.9">
-                <line x1="276" y1="140" x2="262" y2="138"/>
-                <line x1="276" y1="143" x2="262" y2="144"/>
-                <line x1="304" y1="140" x2="318" y2="138"/>
-                <line x1="304" y1="143" x2="318" y2="144"/>
-              </g>
-              <circle cx="290" cy="141" r="2.4" fill="#ff9bd0"/>
+              <path d="M478 104 L486 70 L506 96 Z" fill="var(--accent)"/>
+              <path d="M512 94 L534 68 L538 104 Z" fill="var(--accent)"/>
+              <path d="M485 98 L489 81 L500 95 Z" fill="#ffb3bc"/>
+              <path d="M518 94 L530 80 L533 99 Z" fill="#ffb3bc"/>
+              <circle cx="510" cy="118" r="30" fill="#f3f4f6"/>
+              <path d="M502 106 L544 106 Q549 120 541 129 L502 129 Z" fill="#07080b"/>
+              <circle cx="519" cy="117" r="3.5" fill="#2bd576"/>
+              <circle cx="533" cy="117" r="3.5" fill="#2bd576"/>
             </g>
-
+            <path class="halo" d="M446 112 Q500 72 572 126" fill="none" stroke="#313645" stroke-width="9" stroke-linecap="round"/>
             <!-- wheels -->
             <g class="wheel wheel-rear">
-              <circle cx="150" cy="210" r="46" fill="#111"/>
-              <circle cx="150" cy="210" r="46" fill="none" stroke="#2a2a2a" stroke-width="4"/>
-              <circle cx="150" cy="210" r="20" fill="#1c1c22"/>
-              <g stroke="var(--accent)" stroke-width="4">
-                <line x1="150" y1="176" x2="150" y2="244"/>
-                <line x1="116" y1="210" x2="184" y2="210"/>
-                <line x1="126" y1="186" x2="174" y2="234"/>
-                <line x1="174" y1="186" x2="126" y2="234"/>
-              </g>
+              <circle cx="200" cy="206" r="58" fill="#0b0c10"/>
+              <circle cx="200" cy="206" r="47" fill="none" stroke="var(--accent)" stroke-width="5"/>
+              <circle cx="200" cy="206" r="30" fill="#1d212c"/>
+              <g stroke="#6c7281" stroke-width="4"><line x1="200" y1="178" x2="200" y2="234"/><line x1="176" y1="192" x2="224" y2="220"/><line x1="224" y1="192" x2="176" y2="220"/></g>
+              <circle cx="200" cy="206" r="9" fill="#6c7281"/>
             </g>
             <g class="wheel wheel-front">
-              <circle cx="500" cy="210" r="46" fill="#111"/>
-              <circle cx="500" cy="210" r="46" fill="none" stroke="#2a2a2a" stroke-width="4"/>
-              <circle cx="500" cy="210" r="20" fill="#1c1c22"/>
-              <g stroke="var(--accent)" stroke-width="4">
-                <line x1="500" y1="176" x2="500" y2="244"/>
-                <line x1="466" y1="210" x2="534" y2="210"/>
-                <line x1="476" y1="186" x2="524" y2="234"/>
-                <line x1="524" y1="186" x2="476" y2="234"/>
-              </g>
+              <circle cx="790" cy="208" r="54" fill="#0b0c10"/>
+              <circle cx="790" cy="208" r="44" fill="none" stroke="var(--accent)" stroke-width="5"/>
+              <circle cx="790" cy="208" r="28" fill="#1d212c"/>
+              <g stroke="#6c7281" stroke-width="4"><line x1="790" y1="182" x2="790" y2="234"/><line x1="768" y1="195" x2="812" y2="221"/><line x1="812" y1="195" x2="768" y2="221"/></g>
+              <circle cx="790" cy="208" r="8" fill="#6c7281"/>
             </g>
+            <!-- number roundel -->
+            <circle cx="372" cy="150" r="26" fill="#f3f4f6"/>
+            <text x="372" y="160" text-anchor="middle" font-family="Geist, sans-serif" font-weight="900" font-size="28" fill="#07080b">95</text>
           </svg>
 
           <!-- Overtaking mini-game — replaces the car when you hit "Race me" -->
@@ -223,11 +192,11 @@
     </section>
 
     <!-- ===================== GRID / ABOUT ===================== -->
-    <section class="section grid-sec" id="grid">
+    <section class="section grid-sec" data-n="01" id="grid">
       <div class="section-head">
         <span class="sec-index">01</span>
         <h2 class="sec-title">The Grid</h2>
-        <span class="sec-tag">// driver profile</span>
+        <span class="sec-tag">driver profile</span>
       </div>
 
       <div class="grid-wrap">
@@ -277,11 +246,11 @@
     </section>
 
     <!-- ===================== TELEMETRY / SKILLS ===================== -->
-    <section class="section telemetry-sec" id="telemetry">
+    <section class="section telemetry-sec" data-n="02" id="telemetry">
       <div class="section-head">
         <span class="sec-index">02</span>
         <h2 class="sec-title">Telemetry</h2>
-        <span class="sec-tag">// car setup &amp; skills</span>
+        <span class="sec-tag">car setup &amp; skills</span>
       </div>
 
       <div class="telemetry-grid">
@@ -332,11 +301,11 @@
     </section>
 
     <!-- ===================== RACE HISTORY / EXPERIENCE ===================== -->
-    <section class="section history-sec" id="history">
+    <section class="section history-sec" data-n="03" id="history">
       <div class="section-head">
         <span class="sec-index">03</span>
         <h2 class="sec-title">Race History</h2>
-        <span class="sec-tag">// where I've raced</span>
+        <span class="sec-tag">where I've raced</span>
       </div>
 
       <div class="timeline">
@@ -461,11 +430,11 @@
     </section>
 
     <!-- ===================== PODIUM / PROJECTS ===================== -->
-    <section class="section podium-sec" id="podium">
+    <section class="section podium-sec" data-n="04" id="podium">
       <div class="section-head">
         <span class="sec-index">04</span>
         <h2 class="sec-title">The Podium</h2>
-        <span class="sec-tag">// selected wins</span>
+        <span class="sec-tag">selected wins</span>
       </div>
 
       <div class="podium">
@@ -542,11 +511,11 @@
     </section>
 
     <!-- ===================== GARAGE / APP FOR SALE ===================== -->
-    <section class="section garage-sec" id="garage">
+    <section class="section garage-sec" data-n="05" id="garage">
       <div class="section-head">
         <span class="sec-index">05</span>
         <h2 class="sec-title">The Garage</h2>
-        <span class="sec-tag">// one car is for sale</span>
+        <span class="sec-tag">one car is for sale</span>
       </div>
 
       <!-- Want to name the app publicly? Swap the <h3> text for its name and add real
@@ -599,40 +568,19 @@
               <path d="M150 112 Q182 84 236 92" stroke="var(--accent)" stroke-width="2" fill="none" opacity="0.6" />
             </svg>
             <div class="sale-tag"><span class="sale-tag-hole"></span>FOR SALE</div>
+            <p class="lot" aria-hidden="true">LOT 95</p>
+            <p class="price"><span>PRICE</span> ON ENQUIRY</p>
           </div>
         </div>
       </article>
     </section>
 
     <!-- ===================== TEAM RADIO / FUN ===================== -->
-    <section class="section radio-sec" id="radio">
+    <section class="section radio-sec" data-n="06" id="radio">
       <div class="section-head">
         <span class="sec-index">06</span>
         <h2 class="sec-title">Team Radio</h2>
-        <span class="sec-tag">// off-throttle, unserious</span>
-      </div>
-
-      <!-- Ask my AI (Groq-powered, speaks in Atharva's voice) -->
-      <div class="ai-card reveal" id="ask">
-        <div class="ai-head">
-          <span class="ai-live"><span class="ai-dot"></span>LIVE</span>
-          <span class="ai-title">📻 TALK TO MY RACE ENGINEER</span>
-          <span class="ai-note">built by me · hosted by me · running on Qwen</span>
-        </div>
-        <div class="ai-log" id="aiLog">
-          <div class="ai-msg ai-bot">Oi. I'm Atharva's AI — basically him after two coffees. Ask me anything: the work, the projects, my F1 takes, Miu, whatever. Fair warning, I'm a bit chaotic.</div>
-        </div>
-        <div class="ai-chips" id="aiChips">
-          <button class="ai-chip" type="button">What actually drives you?</button>
-          <button class="ai-chip" type="button">Your hottest F1 take?</button>
-          <button class="ai-chip" type="button">Tell me about Miu</button>
-          <button class="ai-chip" type="button">Are you any good at C?</button>
-          <button class="ai-chip" type="button">Why sell WanderBuddy?</button>
-        </div>
-        <form class="ai-form" id="aiForm">
-          <input class="ai-input" id="aiInput" type="text" maxlength="500" autocomplete="off" placeholder="Ask me something…" aria-label="Ask Atharva's AI" />
-          <button class="ai-send" id="aiSend" type="submit" aria-label="Send">➤</button>
-        </form>
+        <span class="sec-tag">off-throttle, unserious</span>
       </div>
 
       <div class="radio-grid">
@@ -675,11 +623,11 @@
     </section>
 
     <!-- ===================== PIT WALL / CONTACT ===================== -->
-    <section class="section pitwall-sec" id="pitwall">
+    <section class="section pitwall-sec" data-n="07" id="pitwall">
       <div class="section-head">
         <span class="sec-index">07</span>
         <h2 class="sec-title">Pit Wall</h2>
-        <span class="sec-tag">// radio in</span>
+        <span class="sec-tag">radio in</span>
       </div>
 
       <div class="pitwall">
@@ -706,12 +654,14 @@
             <span class="pw-v">+91 99939 41535</span>
           </a>
         </div>
+        <div class="pw-row">
         <a href="assets/atharva_trivedi_resume.pdf" class="btn btn-primary pw-cv" download="Atharva_Trivedi_Resume.pdf">⬇ Download the full Race Card (CV)</a>
 
         <div class="pw-badge">
           <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="atharva-trivedi" data-version="v1">
             <a class="badge-base__link LI-simple-link" href="https://www.linkedin.com/in/atharva-trivedi?trk=profile-badge" target="_blank" rel="noopener">Atharva Trivedi</a>
           </div>
+        </div>
         </div>
       </div>
     </section>
@@ -721,8 +671,11 @@
   <footer class="footer">
     <div class="checker" aria-hidden="true"></div>
     <div class="footer-inner">
+      <a class="nav-brand foot-brand" href="#hero" aria-label="Back to top"><span class="brand-num">95</span><span class="brand-name">A. TRIVEDI</span></a>
+      <div class="foot-lines">
       <p>🏁 Built in the pit lane · powered by curiosity &amp; caffeine</p>
       <p class="foot-copy">© 2026 Atharva Trivedi · Driver #95 · <span id="konamiHint">psst — type <strong>44</strong>, or the Konami code 😼</span></p>
+      </div>
     </div>
   </footer>
 

@@ -424,53 +424,6 @@
     Object.keys(map).forEach((k) => io.observe(document.querySelector(k)));
   })();
 
-  /* ---------- Ask my AI (Groq chat) ---------- */
-  (function askAI() {
-    const form = $("#aiForm"), input = $("#aiInput"), send = $("#aiSend"), log = $("#aiLog"), chips = $("#aiChips");
-    if (!form || !input || !log) return;
-    let busy = false;
-    const convo = []; // recent {role,content} turns, sent so follow-ups make sense
-    const scrollDown = () => { log.scrollTop = log.scrollHeight; };
-    function addMsg(text, who) {
-      const d = document.createElement("div");
-      d.className = "ai-msg " + (who === "user" ? "ai-user" : "ai-bot");
-      d.textContent = text;
-      log.appendChild(d); scrollDown();
-    }
-    function typing() {
-      const t = document.createElement("div");
-      t.className = "ai-msg ai-bot ai-typing";
-      t.appendChild(document.createElement("span")); t.appendChild(document.createElement("span")); t.appendChild(document.createElement("span"));
-      log.appendChild(t); scrollDown();
-      return t;
-    }
-    function ask(q) {
-      if (busy || !q) return;
-      busy = true; send.disabled = true; input.value = "";
-      addMsg(q, "user");
-      if (chips) chips.style.display = "none";
-      const t = typing();
-      const base = ((typeof LB !== "undefined" && LB.api) ? LB.api : "/api").replace(/\/+$/, "");
-      const ctl = ("AbortController" in window) ? new AbortController() : null;
-      const to = ctl ? setTimeout(() => ctl.abort(), 50000) : null;
-      fetch(base + "/ask", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q, history: convo.slice(-8) }), signal: ctl ? ctl.signal : undefined,
-      })
-        .then((r) => r.json())
-        .then((j) => { if (to) clearTimeout(to); finish((j && j.answer) || "", j && j.teach); })
-        .catch(() => { if (to) clearTimeout(to); finish(""); });
-      function finish(answer, teach) {
-        t.remove();
-        addMsg(answer || "My AI's in the pit lane (the server's asleep). Catch it when Atharva's PC is up — the rest of the site's all yours in the meantime.", "bot");
-        if (answer && !teach) { convo.push({ role: "user", content: q }, { role: "assistant", content: answer }); if (convo.length > 16) convo.splice(0, convo.length - 16); }
-        busy = false; send.disabled = false; input.focus();
-      }
-    }
-    form.addEventListener("submit", (e) => { e.preventDefault(); ask(input.value.trim()); });
-    if (chips) $$(".ai-chip", chips).forEach((c) => c.addEventListener("click", () => ask(c.textContent.trim())));
-  })();
-
   /* ---------- Project card mouse glow ---------- */
   (function projGlow() {
     $$(".proj").forEach((p) => {

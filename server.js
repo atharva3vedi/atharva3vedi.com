@@ -22,34 +22,6 @@ const ROOT = __dirname;
 const DATA = path.join(ROOT, "leaderboard.json");
 const PORT = process.env.PORT || 8787;
 const MAX_PER_GAME = 200; // keep the file from growing forever
-const LORE = require("./lore.js");
-const GROQ_KEY = process.env.GROQ_API_KEY || ""; // set this in your shell; NEVER hard-code / commit it
-const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
-const LOCAL_LLAMA_URL = process.env.LOCAL_LLAMA_URL || ""; // e.g. http://127.0.0.1:8080 — set to use local llama.cpp instead of Groq
-const AI_SECRET = process.env.AI_SECRET || ""; // set this to teach the AI facts in chat; keep it secret, NEVER hard-code/commit it
-const ADDITIONS = path.join(ROOT, "lore-additions.txt"); // taught facts land here (blocked from being served)
-const MAX_ADDITIONS = 300;
-function loadAdditions() { try { return fs.readFileSync(ADDITIONS, "utf8").trim(); } catch (_) { return ""; } }
-function addCorrection(text) {
-  try {
-    let lines = loadAdditions().split("\n").filter(Boolean);
-    lines.push("- " + text);
-    if (lines.length > MAX_ADDITIONS) lines = lines.slice(-MAX_ADDITIONS);
-    fs.writeFileSync(ADDITIONS, lines.join("\n") + "\n");
-    return true;
-  } catch (e) { console.error("addCorrection failed:", e.message); return false; }
-}
-
-// simple per-IP rate limit for the AI endpoint (protects the Groq quota)
-const askHits = new Map();
-function askAllowed(ip) {
-  const now = Date.now(), arr = (askHits.get(ip) || []).filter((t) => now - t < 60000);
-  if (arr.length >= 12) { askHits.set(ip, arr); return false; }
-  arr.push(now); askHits.set(ip, arr);
-  if (askHits.size > 5000) askHits.clear();
-  return true;
-}
-
 const MIME = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
   ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8",
@@ -114,61 +86,6 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // ---------- Ask-me AI (local llama.cpp via /v1/chat/completions) ----------
-  if (pathname === "/api/ask" && req.method === "POST") {
-    const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "?").toString().split(",")[0].trim();
-    if (!askAllowed(ip)) return sendJSON(res, 429, { answer: "Whoa, easy — too many questions too fast. Give it a minute and radio back in." });
-    let body = "";
-    req.on("data", (c) => { body += c; if (body.length > 16000) req.destroy(); });
-    req.on("end", () => {
-      let d; try { d = JSON.parse(body); } catch (_) { return sendJSON(res, 400, { error: "bad json" }); }
-      const q = String(d.question == null ? "" : d.question).replace(/[\u0000-\u001f]/g, " ").trim().slice(0, 500);
-      if (!q) return sendJSON(res, 400, { answer: "You didn't ask me anything, mate." });
-      // secret "teach" command — only someone who knows AI_SECRET can add a fact the AI will remember
-      if (AI_SECRET && String(d.question || "").trim().indexOf(AI_SECRET) === 0) {
-        const fact = String(d.question || "").trim().slice(AI_SECRET.length).replace(/^[\s:>_-]+/, "").trim().slice(0, 800);
-        if (!fact) return sendJSON(res, 200, { answer: "Give me the fact right after the word, boss.", teach: true });
-        const ok = addCorrection(fact);
-        return sendJSON(res, 200, { answer: ok ? ("Locked in ✅ — \"" + fact + "\". I'll carry that from now on.") : "Couldn't save that one — check the server logs.", teach: true });
-      }
-      if (typeof fetch !== "function") return sendJSON(res, 200, { answer: "This server's Node is too old for the AI (needs Node 18+). Someone tell Atharva." });
-      // short-term memory: last few turns so follow-ups ("why", "go on") make sense
-      const history = Array.isArray(d.history) ? d.history.slice(-8).map((m) => ({
-        role: (m && m.role === "assistant") ? "assistant" : "user",
-        content: String((m && m.content) || "").replace(/\s+/g, " ").trim().slice(0, 600),
-      })).filter((m) => m.content) : [];
-      const llamaUrl = (LOCAL_LLAMA_URL || "http://127.0.0.1:8080").replace(/\/+$/, "");
-      const ctl = new AbortController();
-      const to = setTimeout(() => ctl.abort(), 60000); // first call after a restart reprocesses the big prompt — give it room
-      fetch(llamaUrl + "/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: ctl.signal,
-        body: JSON.stringify({
-          model: "local",
-          temperature: 0.6,
-          max_tokens: 160,     // short answers = fewer tokens, less compute
-          cache_prompt: true,  // llama.cpp caches the big system prompt across calls
-          chat_template_kwargs: { enable_thinking: false }, // Qwen3: skip the reasoning pass (saves tokens + compute)
-          messages: [
-            { role: "system", content: LORE + (loadAdditions() ? "\n\n# CORRECTIONS FROM ATHARVA (authoritative — these override anything above):\n" + loadAdditions() : "") + "\n\nAnswer in 1-3 short sentences, punchy, no preamble." },
-            ...history,
-            { role: "user", content: q },
-          ],
-        }),
-      })
-        .then((r) => (r.ok ? r.json() : r.text().then((t) => { throw new Error(r.status + " " + t.slice(0, 200)); })))
-        .then((j) => {
-          clearTimeout(to);
-          let answer = ((j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || "").trim();
-          answer = answer.replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/<\/?think>/gi, "").trim(); // drop any leaked reasoning
-          sendJSON(res, 200, { answer: answer || "…(radio static — try again)" });
-        })
-        .catch((e) => { clearTimeout(to); console.error("llama.cpp error:", e.message); sendJSON(res, 200, { answer: "My AI just dropped the radio (local model's busy or off). Give it another go in a sec." }); });
-    });
-    return;
-  }
-
   // ---------- Static files ----------
   const rel = pathname === "/" ? "/index.html" : pathname;
   const filePath = path.join(ROOT, path.normalize(rel).replace(/^(\.\.[/\\])+/, ""));
@@ -198,7 +115,6 @@ server.listen(PORT, () => {
   console.log("");
   console.log("  🏁  atharva3vedi.com is live on  http://localhost:" + PORT);
   console.log("  🏆  Leaderboard API:  GET /api/leaderboard?game=race|react   POST /api/score");
-  console.log("  🤖  Ask-me AI:        POST /api/ask  ->  local LLM at " + (LOCAL_LLAMA_URL || "http://127.0.0.1:8080") + "  (set LOCAL_LLAMA_URL to change)");
   console.log("  💾  Scores saved to:  " + DATA);
   console.log("  (Ctrl+C to stop)");
   console.log("");
