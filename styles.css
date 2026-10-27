@@ -479,9 +479,6 @@ a { color: inherit; text-decoration: none; }
 .pod-1 .podium-step { height: 96px; }
 .pod-2 .podium-step { height: 62px; }
 .pod-3 .podium-step { height: 42px; }
-.pod-4 { grid-column: 1 / -1; grid-row: 2; margin-top: 6px; }
-.podium-item.pod-4 .proj { min-height: 0; }
-.pod-4 .proj-head { padding-right: 56px; }
 .proj {
   position: relative; background: var(--panel); border: 1px solid var(--line);
   border-radius: 14px; padding: 26px; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
@@ -710,7 +707,7 @@ a { color: inherit; text-decoration: none; }
   .grid-wrap { grid-template-columns: 1fr; }
   .telemetry-grid { grid-template-columns: 1fr; }
   .podium { grid-template-columns: 1fr; align-items: stretch; margin-top: 30px; gap: 16px; }
-  .pod-1, .pod-2, .pod-3, .pod-4 { grid-column: 1; grid-row: auto; }
+  .pod-1, .pod-2, .pod-3 { grid-column: 1; grid-row: auto; }
   .pod-1 .podium-step, .pod-2 .podium-step, .pod-3 .podium-step { height: 32px; margin-top: 0; border-radius: 0 0 10px 10px; }
   .podium-step::before { display: none; }
   .pod-place { font-size: 1.3rem; }
